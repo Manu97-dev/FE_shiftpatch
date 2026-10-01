@@ -1,0 +1,23 @@
+import { ApiError, apiRequest } from '../../shared/api/client'
+import { loginResponseSchema, type LoginCredentials } from './auth.schemas'
+
+export async function login(credentials: LoginCredentials) {
+  const body = await apiRequest('/auth/login', {
+    method: 'POST',
+    body: JSON.stringify(credentials),
+  })
+  const result = loginResponseSchema.safeParse(body)
+  if (!result.success) throw new Error('Unexpected login response')
+  return result.data
+}
+
+export function loginErrorMessage(error: unknown): string {
+  if (error instanceof ApiError) {
+    if (error.status === 401) return 'Invalid email or password.'
+    if (error.status === 400) return 'Check your email and password and try again.'
+    if (error.status === 429) return 'Too many login attempts. Please try again later.'
+    return 'We could not sign you in. Please try again shortly.'
+  }
+  if (error instanceof TypeError) return 'Unable to reach the server. Check your connection and try again.'
+  return 'We could not complete your login. Please try again.'
+}

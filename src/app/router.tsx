@@ -1,18 +1,20 @@
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom'
+import { useAuth } from '../features/auth/auth.context'
+import { LoginPage } from '../features/auth/login-page'
 import { HomePage } from '../features/home/home-page'
 
-export function AppRouter() {
+export function AppRoutes() {
+  const { session } = useAuth()
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="*" element={
-          <main className="page">
-            <h1>Page not found</h1>
-            <Link to="/">Return to Shiftpatch</Link>
-          </main>
-        } />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Navigate to={session ? '/home' : '/login'} replace />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/home" element={session ? <HomePage /> : <Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
+}
+
+export function AppRouter() {
+  return <BrowserRouter><AppRoutes /></BrowserRouter>
 }

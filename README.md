@@ -25,12 +25,12 @@ A separate API origin requires backend CORS support.
 ## Stack
 
 - React + TypeScript + Vite.
-- React Router: home and not-found routes.
+- React Router: login, protected empty home, and fallback routes.
 - TanStack Query: server data, with Devtools in development only. Queries use a
   30-second stale time and disable automatic retries by default. Features can
   override these defaults. Mutations do not automatically retry.
 - Context: focused shared UI state. A theme provider demonstrates light/dark
-  appearance; selection resets on reload. Authentication will use a separate provider.
+  appearance; selection resets on reload. Authentication uses a separate in-memory session provider; refresh requires signing in again.
 - Sass Modules: feature styles, with global CSS design tokens.
 - Radix: accessible primitives; the starter uses Tooltip.
 - React Hook Form + Zod + Zod resolver: installed for upcoming forms.
@@ -39,7 +39,8 @@ A separate API origin requires backend CORS support.
 ```text
 src/
   app/                 # Providers and routing
-  features/home/       # Starter page and Sass Module
+  features/auth/       # Login form, contracts, API, and session context
+  features/home/       # Empty protected home screen
   shared/
     api/               # Fetch helper and API errors
     contexts/          # Focused providers and hooks
@@ -49,7 +50,7 @@ src/
 The API helper returns unknown so features can validate responses with Zod. It
 supports an optional bearer token and native RequestInit options, including an
 AbortSignal for query cancellation. Encode JSON bodies with JSON.stringify.
-Authentication, protected routes, and marketplace flows are the next milestone.
+Login posts to `/api/auth/login`, validates success responses, and handles invalid credentials, validation, network, and server errors. Successful logins reach an empty protected home screen. Marketplace flows are the next milestone.
 
 ## Checks and deployment
 
