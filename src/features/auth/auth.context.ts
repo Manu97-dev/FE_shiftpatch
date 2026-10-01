@@ -3,6 +3,9 @@ import type { Session } from './auth.schemas'
 
 export const AuthContext = createContext<{
   session: Session | null
+  status: 'loading' | 'ready' | 'error'
+  retryRestore: () => void
+  signOut: () => Promise<void>
   signIn: (session: Session) => void
 } | null>(null)
 

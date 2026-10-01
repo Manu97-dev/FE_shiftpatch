@@ -30,7 +30,7 @@ A separate API origin requires backend CORS support.
   30-second stale time and disable automatic retries by default. Features can
   override these defaults. Mutations do not automatically retry.
 - Context: focused shared UI state. A theme provider demonstrates light/dark
-  appearance; selection resets on reload. Authentication uses a separate in-memory session provider; refresh requires signing in again.
+  appearance; selection resets on reload. Authentication uses a separate in-memory session provider; refresh restores the session through an HttpOnly backend cookie.
 - Sass Modules: feature styles, with global CSS design tokens.
 - Radix: accessible primitives; the starter uses Tooltip.
 - React Hook Form + Zod + Zod resolver: installed for upcoming forms.
@@ -66,3 +66,17 @@ frontend routes and route `/api` to the backend, or use an API base configured a
 build time with appropriate CORS support. The Vite proxy works in development only.
 
 This folder has its own package.json and lockfile; backend scripts remain separate.
+
+## Persistent sessions
+
+Apply the backend auth_sessions migration and restart the backend before using this
+frontend. Login sets a one-hour HttpOnly, SameSite=Strict session cookie. Startup
+calls GET /api/auth/session before routing. Tokens stay in memory; credentials
+are never saved to browser storage. POST /api/auth/logout revokes the stored session.
+The empty home includes a sign-out control. Failed restoration offers retry.
+
+For production, use HTTPS and a same-origin /api reverse proxy. The backend requires
+NODE_ENV=production and FRONTEND_ORIGIN=https://your-frontend-origin. Cookies then
+use Secure and the __Host- prefix. Development HTTP cookies are for localhost only.
+Cross-origin deployments require explicit credentialed CORS and origin configuration;
+this starter intentionally uses the same-origin Vite proxy instead.

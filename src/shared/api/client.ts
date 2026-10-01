@@ -17,12 +17,14 @@ export async function apiRequest(path: string, options: ApiOptions = {}): Promis
   const { token, ...requestOptions } = options
   const headers = new Headers(requestOptions.headers)
   headers.set('Accept', 'application/json')
+  headers.set('X-Shiftpatch-Request', '1')
   if (requestOptions.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json')
   }
   if (token) headers.set('Authorization', `Bearer ${token}`)
 
   const response = await fetch(`${baseUrl}/${path.replace(/^\//, '')}`, {
+    credentials: 'include',
     ...requestOptions,
     headers,
   })

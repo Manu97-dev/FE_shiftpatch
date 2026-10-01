@@ -10,12 +10,17 @@ import { AppRoutes } from '../../app/router'
 const user = { id: '66666666-6666-4666-8666-666666666666', name: 'Alex', role: 'nurse' }
 
 function setup(path = '/login') {
+  const originalFetch = globalThis.fetch
+  vi.stubGlobal('fetch', (url: string, options: RequestInit) => url === '/api/auth/session'
+    ? Promise.resolve(new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 }))
+    : originalFetch(url, options))
   const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
   render(<QueryClientProvider client={client}><AuthProvider><MemoryRouter initialEntries={[path]}><AppRoutes /></MemoryRouter></AuthProvider></QueryClientProvider>)
   return userEvent.setup()
 }
 
 async function submit(actor: ReturnType<typeof userEvent.setup>, password = 'password') {
+  await screen.findByLabelText('Email address')
   await actor.type(screen.getByLabelText('Email address'), 'nurse@example.com')
   await actor.type(screen.getByLabelText('Password'), password)
   await actor.click(screen.getByRole('button', { name: 'Sign in' }))
@@ -42,6 +47,7 @@ describe('login flow', () => {
     const fetchMock = vi.fn()
     vi.stubGlobal('fetch', fetchMock)
     const actor = setup()
+    await screen.findByRole('button', { name: 'Sign in' })
     await actor.click(screen.getByRole('button', { name: 'Sign in' }))
     await screen.findByText('Enter your email.')
     expect(screen.getByText('Enter your password.')).toBeTruthy()
