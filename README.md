@@ -186,3 +186,17 @@ Agency shift creation opens in a Radix modal from the New shift header action be
 Admin home shows globally scoped upcoming open/assigned/total counts from GET /admin/shifts/summary and a read-only shift list from GET /shifts. Summary and list have independent queries, refresh/retry actions, loading states, stale-data warnings, and 401/403 handling. Summary totals remain global when list filters change. Dates/times and summary timestamps display in America/Tegucigalpa.
 
 Agency, status, and inclusive start-date range dropdown filters apply immediately; date changes apply after a 300ms debounce. Assigned maps to status=filled. Invalid dates and reversed ranges preserve the last valid results and display validation errors; Clear filters resets the form and returns to all shifts. Query keys include user and applied filters; requests carry cancellation signals and validate responses with Zod. Agency choices come from the unfiltered shifts response (agencies without shifts are not included). No pagination or admin write actions are introduced.
+
+### Agency assignment cancellation and no-show controls
+
+Assigned agency shifts expose **Cancel assignment** before their start and
+**Mark no-show** at or after their start, including past assignments for delayed
+reporting. Open shifts expose neither action. Both use a confirmation dialog
+and `POST /api/shifts/:id/cancel`, with `advance` or `no-show` respectively.
+Cancellation removes the assignment; it does not withdraw the shift posting.
+Started shifts reopened by a no-show cannot be claimed again.
+
+The server enforces the same timing rules and agency ownership. On success or
+failure, affected cached shift lists and admin counts are refreshed. Requests
+are not automatically retried. Emails, reminders, and history screens are outside
+this feature.

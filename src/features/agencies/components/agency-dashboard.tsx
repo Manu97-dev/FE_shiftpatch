@@ -1,3 +1,4 @@
+import { AgencyAssignmentControls } from './agency-assignment-controls'
 import { Dialog } from 'radix-ui'
 import { useState } from 'react'
 import { CreateShiftForm } from '../../shifts/components/create-shift-form'
@@ -43,8 +44,8 @@ function AgencyShifts({ agencyId, agencyName }: { agencyId: string; agencyName: 
       {creating && <CreateShiftForm agencyId={agencyId} agencyName={agencyName} onClose={() => setCreating(false)} onCreated={() => setCreating(false)} />}
       {shifts.length === 0 ? <div className={styles.state}><h3>No shifts posted yet</h3><p>Your agency’s shifts will appear here once they are created.</p></div> : <>
         <h3 className={styles.sectionTitle}>Upcoming & current <span>{active.length}</span></h3>
-        {active.length ? <ShiftList shifts={active} now={now} /> : <p>No upcoming or current shifts.</p>}
-        {past.length > 0 && <details className={styles.history}><summary>Past shifts ({past.length})</summary><ShiftList shifts={past} now={now} /></details>}
+        {active.length ? <ShiftList shifts={active} now={now} renderAction={(shift) => <AgencyAssignmentControls shift={shift} now={now} />} /> : <p>No upcoming or current shifts.</p>}
+        {past.length > 0 && <details className={styles.history}><summary>Past shifts ({past.length})</summary><ShiftList shifts={past} now={now} renderAction={(shift) => <AgencyAssignmentControls shift={shift} now={now} />} /></details>}
       </>}
     </>}
   </ShiftSection></Dialog.Root>

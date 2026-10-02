@@ -11,10 +11,10 @@ export async function claimShift(shiftId: string, token: string) {
     .parse(await apiRequest(`/shifts/${encodeURIComponent(shiftId)}/claim`, { method: 'POST', token }))
 }
 
-export async function cancelShift(shiftId: string, token: string) {
-  return cancelledShiftSchema.refine((shift) => shift.id === shiftId && shift.status === 'open' && shift.claimedBy === null && shift.cancellation.reason === 'advance')
+export async function cancelShift(shiftId: string, token: string, reason: 'advance' | 'no-show' = 'advance') {
+  return cancelledShiftSchema.refine((shift) => shift.id === shiftId && shift.status === 'open' && shift.claimedBy === null && shift.cancellation.reason === reason)
     .parse(await apiRequest(`/shifts/${encodeURIComponent(shiftId)}/cancel`, {
-      method: 'POST', token, body: JSON.stringify({ reason: 'advance' }),
+      method: 'POST', token, body: JSON.stringify({ reason }),
     }))
 }
 
