@@ -15,3 +15,7 @@
 .error { border: 1px solid #e4b8b2; background: #fff0ef; color: #852c25; border-radius: var(--radius-card); padding: 1.5rem; margin-bottom: 1.5rem; h3 { margin: 0 0 .5rem; } p { line-height: 1.6; } }
 .sectionTitle { display: flex; align-items: center; gap: .75rem; margin: 1.5rem 0 1rem; font-size: 1rem; span { color: var(--color-muted); font-size: .8rem; } }
 .history { margin-top: 2rem; summary { cursor: pointer; font-weight: 600; padding: .5rem 0 1rem; } }
+
+.cardActions { margin-top: 1.25rem; }
+.claimButton { border: 0; border-radius: .6rem; padding: .75rem 1rem; background: var(--color-accent); color: var(--color-background); font-weight: 650; }
+.claimButton:disabled { opacity: .6; cursor: wait; }

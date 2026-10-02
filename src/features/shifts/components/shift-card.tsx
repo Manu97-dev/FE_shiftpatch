@@ -1,8 +1,9 @@
+import type { ReactNode } from 'react'
 import type { Shift } from '../api/shifts.schemas'
 import { shiftDateFormatter, shiftTimeFormatter, shiftTimes } from '../utils/shift-time'
 import styles from './shift-section.module.scss'
 
-export function ShiftCard({ shift, now }: { shift: Shift; now: number }) {
+export function ShiftCard({ shift, now, action }: { shift: Shift; now: number; action?: ReactNode }) {
   const { start, end, overnight } = shiftTimes(shift)
   const past = end.getTime() <= now
   const underway = !past && start.getTime() <= now
@@ -20,6 +21,7 @@ export function ShiftCard({ shift, now }: { shift: Shift; now: number }) {
         <time dateTime={end.toISOString()}>{shiftTimeFormatter.format(end)}</time>
         {overnight && <span className={styles.overnight}>Ends next day · {shiftDateFormatter.format(end)}</span>}
       </p>
+      {action && <div className={styles.cardActions}>{action}</div>}
     </li>
   )
 }

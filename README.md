@@ -141,3 +141,20 @@ even with many assignments. NurseShiftTabs composes the domain-specific sections
 My shifts counts upcoming/current assignments; Available shifts counts server
 results. Counts are omitted until data loads. Queries share existing keys and
 TanStack Query deduplicates requests between count and section observers.
+
+## Claiming a shift
+
+Available cards open a reusable confirmation dialog showing agency, role, and
+the full schedule including overnight end dates. Confirmation sends a bodyless
+POST /api/shifts/:id/claim with the in-memory bearer token. No automatic retries
+or optimistic assignment updates occur. Success invalidates and refetches the
+current user's available-shifts and My shifts queries, including inactive ones,
+so tab counts update too. Errors reconcile both lists and show specific messages
+for credential expiry, missing access, expired sessions, missing shifts, and
+competing claims. Network/server failures advise refreshing before retrying,
+since a failed response does not prove that the server rejected the assignment.
+
+The current backend validates JWT claims, nurse role, UUID, empty body, nurse
+profile, credentials through the current Tegucigalpa date, and an unassigned
+shift via an atomic update. It does not enforce future start time, overlaps,
+professional role matching, or credentials valid through the end of the shift.
