@@ -172,3 +172,11 @@ The backend currently has no timing cutoff. The nurse UI offers cancellation onl
 `HomePage` maps authenticated roles to separate nurse, agency, and admin pages through a typed role registry. `HomeLayout` shares the header and sign-out handling. Agency accounts load their agency identity and shifts using `GET /agencies` to discover the single membership, followed by `GET /agencies/:agencyId/shifts`. The backend verifies membership for the requested agency. No selector is shown. Query keys are scoped to the user and agency. Upcoming/current and past shifts reuse the shared shift cards, with loading, empty, retry, authentication, and permission states. Missing or revoked membership shows an access error. Shift creation is the next phase.
 
 Deploy with the matching backend and apply its `0003_single_agency_per_user.sql` migration first. Each agency can have multiple staff users, but each user has at most one agency membership.
+
+### Agency shift creation
+
+The agency dashboard exposes New shift after agency discovery and scoped-list access succeed. React Hook Form and Zod validate the four required fields: role (trimmed, 1–100 characters), valid calendar date, and HH:mm start/end times. Equal times are rejected; an earlier end time is explained as next-day completion. RN, LPN, and CNA are suggestions, not an enforced enum: the backend accepts arbitrary professional role strings. Posting agency is displayed and cannot be edited.
+
+Before POST /shifts, the frontend rechecks the authenticated user's current single agency and blocks mismatches. Only the four supported fields are sent; the backend resolves ownership and permits agency owners/managers. Success validates an open, unassigned shift belonging to the expected agency and refreshes the agency's shift list plus cached marketplace queries. There are no automatic retries. Session/access errors block resubmission; uncertain network/server outcomes require closing and refreshing before another attempt. The backend currently does not enforce future dates, duplicate schedules, a professional-role catalog, pay, or location fields.
+
+Agency shift creation opens in a Radix modal from the New shift header action beside Refresh. Form actions share a horizontal row. Escape, outside clicks, and Close form are disabled while submitting; success closes the modal and refreshes the shift list.

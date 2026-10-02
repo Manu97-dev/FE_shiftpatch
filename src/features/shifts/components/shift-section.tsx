@@ -5,7 +5,7 @@ interface Props {
   id: string; title: string; description: string; loadingMessage: string; errorTitle: string
   forbiddenMessage: string; forbiddenTitle?: string; staleMessage: string
   loading: boolean; fetching: boolean; hasError: boolean; unauthorized: boolean; forbidden: boolean; hasData: boolean
-  onRefresh: () => void; onSignIn: () => void; children: ReactNode
+  headerActions?: ReactNode; onRefresh: () => void; onSignIn: () => void; children: ReactNode
 }
 
 export function ShiftSection(props: Props) {
@@ -13,7 +13,7 @@ export function ShiftSection(props: Props) {
   return <section className={styles.section} aria-labelledby={`${id}-heading`}>
     <div className={styles.heading}>
       <div><h2 id={`${id}-heading`}>{title}</h2><p>{description}</p></div>
-      {!unauthorized && !forbidden && <button className={styles.button} onClick={onRefresh} disabled={fetching}>{fetching && !loading ? 'Refreshing…' : 'Refresh'}</button>}
+      {!unauthorized && !forbidden && <div className={styles.headerActions}>{props.headerActions}<button className={styles.button} onClick={onRefresh} disabled={fetching}>{fetching && !loading ? 'Refreshing…' : 'Refresh'}</button></div>}
     </div>
     <p className={styles.timezone}>All shift dates and times are in America/Tegucigalpa (UTC−06:00).</p>
     {loading && <div className={styles.state} role="status">{props.loadingMessage}</div>}

@@ -1,3 +1,4 @@
+import type { CreateShiftInput } from './create-shift.schemas'
 import { apiRequest } from '../../../shared/api/client'
 import { cancelledShiftSchema, shiftSchema, shiftsResponseSchema } from './shifts.schemas'
 
@@ -15,4 +16,10 @@ export async function cancelShift(shiftId: string, token: string) {
     .parse(await apiRequest(`/shifts/${encodeURIComponent(shiftId)}/cancel`, {
       method: 'POST', token, body: JSON.stringify({ reason: 'advance' }),
     }))
+}
+
+export async function createShift(input: CreateShiftInput, token: string, agencyId: string) {
+  const { role, date, startTime, endTime } = input
+  return shiftSchema.refine((shift) => shift.agencyId === agencyId && shift.status === 'open' && shift.claimedBy === null)
+    .parse(await apiRequest('/shifts', { method: 'POST', token, body: JSON.stringify({ role, date, startTime, endTime }) }))
 }
