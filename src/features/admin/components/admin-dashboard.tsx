@@ -1,3 +1,5 @@
+import { Tabs } from '../../../shared/components/tabs'
+import { AgencyManagement } from './agency-management'
 import { useState } from 'react'
 import { ApiError } from '../../../shared/api/client'
 import { useAuth } from '../../auth/contexts/auth.context'
@@ -22,7 +24,8 @@ export function AdminDashboard() {
   const forbidden = query.error instanceof ApiError && query.error.status === 403
   const filtered = Object.keys(filters).length > 0
   if (session?.user.role !== 'admin') return null
-  return <><AdminShiftSummary />
+  return <Tabs label="Admin workspace" defaultValue="shifts" items={[
+    { value: 'shifts', label: 'Shifts', content: <><AdminShiftSummary />
     <ShiftSection id="admin-shifts" title="All shifts" description="Review schedules and coverage across agencies. Date filters match the shift’s start date."
       loading={query.isPending} fetching={query.isFetching} hasError={query.isError} hasData={Boolean(query.data)} unauthorized={unauthorized} forbidden={forbidden}
       headerActions={<button className={shiftStyles.button} onClick={() => { setFilters({}); setFilterReset((version) => version + 1) }}>Clear filters</button>}
@@ -35,5 +38,7 @@ export function AdminDashboard() {
         {query.data.shifts.length ? <ShiftList shifts={query.data.shifts} now={now} /> : <div className={styles.empty}><h3>{filtered ? 'No shifts match your filters' : 'No shifts posted yet'}</h3><p>{filtered ? 'Adjust or clear the filters to see more shifts.' : 'Agency shifts will appear here once they are created.'}</p></div>}
       </>}
     </ShiftSection>
-  </>
+    </> },
+    { value: 'agencies', label: 'Agencies', content: <AgencyManagement /> },
+  ]} />
 }

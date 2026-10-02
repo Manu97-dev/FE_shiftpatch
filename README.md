@@ -215,3 +215,20 @@ this initial flow. Agency/admin registration is not offered. Duplicate email,
 validation, server, and network errors retain the form for correction; signup
 requests are not automatically retried. Authenticated visits to `/register`
 redirect to home.
+
+### Admin agency management
+
+The admin home uses **Shifts** and **Agencies** tabs, matching the nurse tab
+interface. Shifts is the default tab; Agencies contains the **Agencies and members**
+section. Switching tabs preserves shift filters and unfinished creation forms. Admins can create an agency with its name/contact email, then use
+**Add member** for that agency to create a new owner or manager account with
+name, email, and an initial password of at least 12 characters. Existing members
+are listed with names, emails, and membership roles, including agencies with no
+shifts. New agencies require a member before someone can access the agency home.
+
+New members sign in through the normal login page. Creating an account does not
+replace the current admin session. Login details are shared directly by the
+admin; no invitation email is sent. Duplicate emails are rejected, not linked or
+reassigned. Member editing, deletion, reassignment, and password reset are outside
+this creation feature. Requests are not automatically retried, and affected
+agency lists refresh after creation attempts.
