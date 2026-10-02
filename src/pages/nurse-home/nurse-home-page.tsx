@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
-import { useAuth } from '../auth/auth.context'
-import { AvailableShifts } from '../shifts/available-shifts'
-import { MyShifts } from '../shifts/my-shifts'
-import styles from './home-page.module.scss'
+import { useAuth } from '../../features/auth/contexts/auth.context'
+import { AvailableShifts } from '../../features/shifts/components/available-shifts'
+import { MyShifts } from '../../features/shifts/components/my-shifts'
+import styles from './nurse-home-page.module.scss'
 
-export function HomePage() {
+export function NurseHomePage() {
   const { session, signOut } = useAuth()
   const client = useQueryClient()
   const [pending, setPending] = useState(false)

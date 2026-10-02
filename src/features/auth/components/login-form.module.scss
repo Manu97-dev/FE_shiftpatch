@@ -1,19 +1,4 @@
-.page { min-height: 100dvh; display: grid; grid-template-columns: 1fr 1fr; }
-.introduction {
-  padding: clamp(2rem, 6vw, 5rem);
-  background: #173e34;
-  color: #f4f7ef;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 4rem;
-  h1 { font-size: clamp(2.4rem, 4vw, 4rem); line-height: 1.12; letter-spacing: -.04em; margin: 1rem 0; }
-}
-.brand { font-size: 1.6rem; font-weight: 750; text-decoration: none; }
 .eyebrow { text-transform: uppercase; font-size: .75rem; letter-spacing: .14em; font-weight: 700; }
-.description { max-width: 390px; color: #c1d4c8; line-height: 1.8; }
-.note { font-size: .85rem; color: #c1d4c8; }
-.formPanel { display: grid; place-items: center; padding: clamp(1.5rem, 5vw, 4rem); }
 .formContainer {
   width: 100%; max-width: 400px;
   h2 { font-size: clamp(1.6rem, 3vw, 2rem); letter-spacing: -.025em; margin: .8rem 0; }
@@ -32,8 +17,3 @@
 .submit { width: 100%; padding: .9rem 1rem; border: 0; border-radius: .6rem; background: #145e50; color: white; font-weight: 600; }
 .submit:hover { background: #104b40; }
 .submit:disabled { opacity: .6; cursor: wait; }
-@media (max-width: 760px) {
-  .page { grid-template-columns: 1fr; }
-  .introduction { gap: 1rem; padding: 1.5rem; h1, .description, .note { display: none; } .eyebrow { margin-bottom: 0; } }
-  .formPanel { padding: 2.5rem 1.5rem; align-items: start; }
-}

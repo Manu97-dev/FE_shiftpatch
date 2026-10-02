@@ -3,10 +3,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthContext } from '../auth/auth.context'
+import { AuthContext } from '../../auth/contexts/auth.context'
 import { MyShifts } from './my-shifts'
-import { fetchMyShifts } from '../nurses/nurses.api'
-import { shiftTimes } from './shift-time'
+import { fetchMyShifts } from '../../nurses/api/nurses.api'
+import { shiftTimes } from '../utils/shift-time'
 
 const nurseId = '33333333-3333-4333-8333-333333333333'
 const shift = {

@@ -3,7 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest'
 import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { AuthContext } from '../auth/auth.context'
+import { AuthContext } from '../../auth/contexts/auth.context'
 import { AvailableShifts } from './available-shifts'
 import { MyShifts } from './my-shifts'
 

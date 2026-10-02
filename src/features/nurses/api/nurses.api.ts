@@ -1,4 +1,4 @@
-import { apiRequest } from '../../shared/api/client'
+import { apiRequest } from '../../../shared/api/client'
 import { nurseShiftsResponseSchema } from './nurses.schemas'
 
 export async function fetchMyShifts(token: string, signal?: AbortSignal) {

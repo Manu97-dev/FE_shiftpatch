@@ -1,22 +1,16 @@
-import { useQuery } from '@tanstack/react-query'
-import { ApiError } from '../../shared/api/client'
-import { useAuth } from '../auth/auth.context'
-import { fetchMyShifts } from '../nurses/nurses.api'
-import { shiftTimes } from './shift-time'
+import { ApiError } from '../../../shared/api/client'
+import { useAuth } from '../../auth/contexts/auth.context'
+import { useMyShifts } from '../../nurses/hooks/use-my-shifts'
+import { shiftTimes } from '../utils/shift-time'
 import { ShiftList } from './shift-list'
 import { ShiftSection } from './shift-section'
-import { useShiftClock } from './use-shift-clock'
+import { useShiftClock } from '../hooks/use-shift-clock'
 import styles from './shift-section.module.scss'
 
 export function MyShifts() {
-  const { session, clearSession } = useAuth()
+  const { clearSession } = useAuth()
   const now = useShiftClock()
-  const query = useQuery({
-    queryKey: ['nurses', session?.user.id, 'my-shifts'],
-    queryFn: ({ signal }) => fetchMyShifts(session!.token, signal),
-    enabled: session?.user.role === 'nurse',
-    retry: false,
-  })
+  const query = useMyShifts()
   const shifts = [...(query.data?.shifts ?? [])].sort((a, b) =>
     shiftTimes(a).start.getTime() - shiftTimes(b).start.getTime() || a.id.localeCompare(b.id))
   const upcoming = shifts.filter((shift) => shiftTimes(shift).end.getTime() > now)

@@ -1,4 +1,4 @@
-import { apiRequest } from '../../shared/api/client'
+import { apiRequest } from '../../../shared/api/client'
 import { shiftsResponseSchema } from './shifts.schemas'
 
 export async function fetchAvailableShifts(token: string, signal?: AbortSignal) {

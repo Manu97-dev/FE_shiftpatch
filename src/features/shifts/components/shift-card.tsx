@@ -1,5 +1,5 @@
-import type { Shift } from './shifts.schemas'
-import { shiftDateFormatter, shiftTimeFormatter, shiftTimes } from './shift-time'
+import type { Shift } from '../api/shifts.schemas'
+import { shiftDateFormatter, shiftTimeFormatter, shiftTimes } from '../utils/shift-time'
 import styles from './shift-section.module.scss'
 
 export function ShiftCard({ shift, now }: { shift: Shift; now: number }) {
@@ -22,9 +22,5 @@ export function ShiftCard({ shift, now }: { shift: Shift; now: number }) {
       </p>
     </li>
   )
-}
-
-export function ShiftList({ shifts, now }: { shifts: Shift[]; now: number }) {
-  return <ul className={styles.list}>{shifts.map((shift) => <ShiftCard key={shift.id} shift={shift} now={now} />)}</ul>
 }
 

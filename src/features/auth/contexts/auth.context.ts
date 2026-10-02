@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react'
-import type { Session } from './auth.schemas'
+import type { Session } from '../api/auth.schemas'
 
 export const AuthContext = createContext<{
   session: Session | null

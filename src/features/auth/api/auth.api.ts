@@ -1,4 +1,4 @@
-import { ApiError, apiRequest } from '../../shared/api/client'
+import { ApiError, apiRequest } from '../../../shared/api/client'
 import { loginResponseSchema, type LoginCredentials } from './auth.schemas'
 
 export async function login(credentials: LoginCredentials) {

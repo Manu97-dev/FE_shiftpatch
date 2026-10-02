@@ -1,15 +1,15 @@
 import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { Navigate, useNavigate } from 'react-router-dom'
-import { useAuth } from './auth.context'
-import { loginFormSchema, type LoginCredentials } from './auth.schemas'
-import { login } from './auth.api'
-import { loginErrorMessage } from './login.errors'
-import styles from './login-page.module.scss'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/auth.context'
+import { loginFormSchema, type LoginCredentials } from '../api/auth.schemas'
+import { login } from '../api/auth.api'
+import { loginErrorMessage } from '../login.errors'
+import styles from './login-form.module.scss'
 
-export function LoginPage() {
-  const { session, signIn } = useAuth()
+export function LoginForm() {
+  const { signIn } = useAuth()
   const navigate = useNavigate()
   const { register, handleSubmit, formState: { errors } } = useForm<LoginCredentials>({
     resolver: zodResolver(loginFormSchema),
@@ -23,20 +23,7 @@ export function LoginPage() {
     },
   })
 
-  if (session) return <Navigate to="/home" replace />
-
   return (
-    <main className={styles.page}>
-      <section className={styles.introduction}>
-        <a className={styles.brand} href="/login">Shiftpatch</a>
-        <div>
-          <p className={styles.eyebrow}>Care, connected.</p>
-          <h1>Good care starts<br />with great people.</h1>
-          <p className={styles.description}>A shared place for nurses and agencies to connect, find shifts, and coordinate care.</p>
-        </div>
-        <p className={styles.note}>Connecting people who care.</p>
-      </section>
-      <section className={styles.formPanel} aria-labelledby="login-heading">
         <div className={styles.formContainer}>
           <p className={styles.eyebrow}>Welcome back</p>
           <h2 id="login-heading">Sign in to Shiftpatch</h2>
@@ -63,7 +50,5 @@ export function LoginPage() {
             </fieldset>
           </form>
         </div>
-      </section>
-    </main>
   )
 }

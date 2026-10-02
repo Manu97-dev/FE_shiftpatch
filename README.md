@@ -38,13 +38,13 @@ A separate API origin requires backend CORS support.
 
 ```text
 src/
-  app/                 # Providers and routing
-  features/auth/       # Login form, contracts, API, and session context
-  features/home/       # Empty protected home screen
-  shared/
-    api/               # Fetch helper and API errors
-    contexts/          # Focused providers and hooks
-    styles/            # Global styles and tokens
+  app/                 # Routing and application providers
+  pages/               # Route-level login and nurse-home screens
+  features/
+    auth/              # API, schemas, login form, and auth contexts
+    nurses/            # Nurse API, schemas, and My shifts query hook
+    shifts/            # Shift API, schemas, hooks, components, and utilities
+  shared/              # HTTP transport, theme contexts, and global styles
 ```
 
 The API helper returns unknown so features can validate responses with Zod. It
@@ -113,11 +113,20 @@ eligibility; the backend will enforce eligibility when claiming is implemented.
 
 Frontend API modules mirror backend entity boundaries:
 
-- features/auth/auth.api.ts: login, session restoration, and logout.
-- features/nurses/nurses.api.ts: the authenticated nurse's assigned shifts.
-- features/shifts/shifts.api.ts: available shifts and future shift mutations.
+- features/auth/api/auth.api.ts: login, session restoration, and logout.
+- features/nurses/api/nurses.api.ts: the authenticated nurse's assigned shifts.
+- features/shifts/api/shifts.api.ts: available shifts and future shift mutations.
 
 Response contracts live in the corresponding *.schemas.ts files. The nurse
 contract reuses the shared shift schema. Components own presentation and query
 lifecycle; API modules own requests and response validation. Login error copy
 lives separately in login.errors.ts. shared/api/client.ts handles HTTP transport.
+
+## Organization rules
+
+Pages compose feature UI. Domain API modules own HTTP calls and response validation;
+query hooks own query keys and request lifecycle. Feature components render domain
+UI. Shared code serves unrelated features. Domain UI such as ShiftCard stays in
+the shifts feature even when multiple pages reuse it. Tests and Sass Modules stay
+next to the code they cover; the shift presentation components share their section
+stylesheet. No empty placeholder folders or barrel exports are required.

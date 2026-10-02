@@ -1,21 +1,15 @@
-import { useQuery } from '@tanstack/react-query'
-import { ApiError } from '../../shared/api/client'
-import { useAuth } from '../auth/auth.context'
-import { fetchAvailableShifts } from './shifts.api'
+import { ApiError } from '../../../shared/api/client'
+import { useAuth } from '../../auth/contexts/auth.context'
+import { useAvailableShifts } from '../hooks/use-available-shifts'
 import { ShiftList } from './shift-list'
 import { ShiftSection } from './shift-section'
-import { useShiftClock } from './use-shift-clock'
+import { useShiftClock } from '../hooks/use-shift-clock'
 import styles from './shift-section.module.scss'
 
 export function AvailableShifts() {
-  const { session, clearSession } = useAuth()
+  const { clearSession } = useAuth()
   const now = useShiftClock()
-  const query = useQuery({
-    queryKey: ['nurses', session?.user.id, 'available-shifts'],
-    queryFn: ({ signal }) => fetchAvailableShifts(session!.token, signal),
-    enabled: session?.user.role === 'nurse',
-    retry: false,
-  })
+  const query = useAvailableShifts()
   const shifts = query.data?.shifts ?? []
   const unauthorized = query.error instanceof ApiError && query.error.status === 401
   const forbidden = query.error instanceof ApiError && query.error.status === 403

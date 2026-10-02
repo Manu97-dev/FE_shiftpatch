@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthProvider } from './auth-provider'
-import { AppRoutes } from '../../app/router'
+import { AppRoutes } from '../../../app/router'
 
 const session = { token: 'memory-only-token', user: { id: '66666666-6666-4666-8666-666666666666', name: 'Alex', role: 'nurse' } }
 function mount() {

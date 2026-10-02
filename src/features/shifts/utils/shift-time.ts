@@ -1,4 +1,4 @@
-import type { Shift } from './shifts.schemas'
+import type { Shift } from '../api/shifts.schemas'
 
 // The API explicitly returns local dates and times in America/Tegucigalpa (UTC-06).
 export function shiftTimes(shift: Shift) {
