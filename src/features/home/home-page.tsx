@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../auth/auth.context'
+import { AvailableShifts } from '../shifts/available-shifts'
 import { MyShifts } from '../shifts/my-shifts'
 import styles from './home-page.module.scss'
 
@@ -27,6 +28,7 @@ export function HomePage() {
         <h1>Welcome back, {session.user.name.split(' ')[0]}.</h1>
         <p className={styles.intro}>Keep track of your schedule and the care ahead.</p>
         <MyShifts />
+        <AvailableShifts />
       </> : <><h1>Welcome, {session?.user.name}.</h1><p>Your workspace is coming soon.</p></>}
     </main>
   </div>

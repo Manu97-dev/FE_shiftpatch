@@ -4,7 +4,8 @@ import { useForm } from 'react-hook-form'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { useAuth } from './auth.context'
 import { loginFormSchema, type LoginCredentials } from './auth.schemas'
-import { login, loginErrorMessage } from './login.api'
+import { login } from './auth.api'
+import { loginErrorMessage } from './login.errors'
 import styles from './login-page.module.scss'
 
 export function LoginPage() {

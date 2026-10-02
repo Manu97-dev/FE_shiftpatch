@@ -12,6 +12,7 @@ function mount() {
   const originalFetch = globalThis.fetch
   vi.stubGlobal('fetch', (url: string, options: RequestInit) => url === '/api/nurses/me/shifts'
     ? Promise.resolve(new Response(JSON.stringify({ nurseId: '33333333-3333-4333-8333-333333333333', shifts: [] })))
+    : url === '/api/shifts/available' ? Promise.resolve(new Response(JSON.stringify({ shifts: [] })))
     : originalFetch(url, options))
   return render(<QueryClientProvider client={new QueryClient()}><AuthProvider><MemoryRouter initialEntries={['/home']}><AppRoutes /></MemoryRouter></AuthProvider></QueryClientProvider>)
 }

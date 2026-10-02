@@ -14,6 +14,7 @@ function setup(path = '/login') {
   vi.stubGlobal('fetch', (url: string, options: RequestInit) => url === '/api/auth/session'
     ? Promise.resolve(new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 }))
     : url === '/api/nurses/me/shifts' ? Promise.resolve(new Response(JSON.stringify({ nurseId: '33333333-3333-4333-8333-333333333333', shifts: [] })))
+    : url === '/api/shifts/available' ? Promise.resolve(new Response(JSON.stringify({ shifts: [] })))
     : originalFetch(url, options))
   const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
   render(<QueryClientProvider client={client}><AuthProvider><MemoryRouter initialEntries={[path]}><AppRoutes /></MemoryRouter></AuthProvider></QueryClientProvider>)

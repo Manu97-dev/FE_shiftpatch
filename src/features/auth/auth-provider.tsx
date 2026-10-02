@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useCallback, useEffect, useMemo, useState, type PropsWithChildren } from 'react'
 import { AuthContext } from './auth.context'
-import { logout, restoreSession } from './login.api'
+import { logout, restoreSession } from './auth.api'
 import type { Session } from './auth.schemas'
 
 export function AuthProvider({ children }: PropsWithChildren) {

@@ -96,3 +96,28 @@ a placeholder home and do not call the nurse endpoint.
 
 This phase only lists assignments. Available shifts, detail views, claiming, and
 cancellation remain separate follow-up phases.
+
+## Available shifts
+
+Nurse home stacks My shifts above Available shifts, preserving a commitments-first
+layout on desktop and mobile. The marketplace uses GET /api/shifts/available and validates the shared shift
+contract. The backend filters upcoming unassigned shifts and orders by start time
+and ID; the frontend displays the result without filtering or reordering it. Each section has its own query
+and refresh/retry controls, so a marketplace failure does not hide assignments.
+Cards, list layout, loading/error presentation, timezone formatting, and clock
+updates are shared between sections. Shift details and claim/cancel actions are
+reserved for subsequent phases. Open status alone does not establish credential
+eligibility; the backend will enforce eligibility when claiming is implemented.
+
+## API organization
+
+Frontend API modules mirror backend entity boundaries:
+
+- features/auth/auth.api.ts: login, session restoration, and logout.
+- features/nurses/nurses.api.ts: the authenticated nurse's assigned shifts.
+- features/shifts/shifts.api.ts: available shifts and future shift mutations.
+
+Response contracts live in the corresponding *.schemas.ts files. The nurse
+contract reuses the shared shift schema. Components own presentation and query
+lifecycle; API modules own requests and response validation. Login error copy
+lives separately in login.errors.ts. shared/api/client.ts handles HTTP transport.

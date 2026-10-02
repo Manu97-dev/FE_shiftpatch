@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthContext } from '../auth/auth.context'
 import { MyShifts } from './my-shifts'
-import { fetchMyShifts } from './my-shifts.api'
+import { fetchMyShifts } from '../nurses/nurses.api'
 import { shiftTimes } from './shift-time'
 
 const nurseId = '33333333-3333-4333-8333-333333333333'
