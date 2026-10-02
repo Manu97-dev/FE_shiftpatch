@@ -80,3 +80,19 @@ NODE_ENV=production and FRONTEND_ORIGIN=https://your-frontend-origin. Cookies th
 use Secure and the __Host- prefix. Development HTTP cookies are for localhost only.
 Cross-origin deployments require explicit credentialed CORS and origin configuration;
 this starter intentionally uses the same-origin Vite proxy instead.
+
+## Nurse home: My shifts
+
+Nurse accounts fetch GET /api/nurses/me/shifts with their in-memory bearer token.
+The response is validated with Zod, including nurse-profile ownership. Query cache
+keys include the login user ID and are cleared on logout or session rejection.
+Upcoming/current assignments appear first; past assignments are in collapsible
+history. Dates use America/Tegucigalpa regardless of the browser timezone, and
+overnight shifts explicitly show the end date. The screen handles initial loading,
+empty results, no upcoming assignments, expired authentication, missing nurse
+access, malformed responses, and temporary failures with retry. Failed refreshes
+retain previously loaded results with a warning. Admin and agency accounts keep
+a placeholder home and do not call the nurse endpoint.
+
+This phase only lists assignments. Available shifts, detail views, claiming, and
+cancellation remain separate follow-up phases.

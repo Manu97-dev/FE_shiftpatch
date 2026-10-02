@@ -5,6 +5,7 @@ export const AuthContext = createContext<{
   session: Session | null
   status: 'loading' | 'ready' | 'error'
   retryRestore: () => void
+  clearSession: () => void
   signOut: () => Promise<void>
   signIn: (session: Session) => void
 } | null>(null)

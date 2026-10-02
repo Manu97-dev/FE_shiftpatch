@@ -9,6 +9,10 @@ import { AppRoutes } from '../../app/router'
 
 const session = { token: 'memory-only-token', user: { id: '66666666-6666-4666-8666-666666666666', name: 'Alex', role: 'nurse' } }
 function mount() {
+  const originalFetch = globalThis.fetch
+  vi.stubGlobal('fetch', (url: string, options: RequestInit) => url === '/api/nurses/me/shifts'
+    ? Promise.resolve(new Response(JSON.stringify({ nurseId: '33333333-3333-4333-8333-333333333333', shifts: [] })))
+    : originalFetch(url, options))
   return render(<QueryClientProvider client={new QueryClient()}><AuthProvider><MemoryRouter initialEntries={['/home']}><AppRoutes /></MemoryRouter></AuthProvider></QueryClientProvider>)
 }
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
