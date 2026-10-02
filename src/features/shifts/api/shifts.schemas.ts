@@ -12,3 +12,7 @@ export const shiftSchema = z.object({
 export type Shift = z.infer<typeof shiftSchema>
 
 export const shiftsResponseSchema = z.object({ shifts: z.array(shiftSchema) })
+
+export const cancelledShiftSchema = shiftSchema.extend({
+  cancellation: z.object({ reason: z.enum(['advance', 'no-show']), previousNurseId: z.string().uuid() }),
+})

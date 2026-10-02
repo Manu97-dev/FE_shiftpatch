@@ -158,3 +158,11 @@ The current backend validates JWT claims, nurse role, UUID, empty body, nurse
 profile, credentials through the current Tegucigalpa date, and an unassigned
 shift via an atomic update. It does not enforce future start time, overlaps,
 professional role matching, or credentials valid through the end of the shift.
+
+### Nurse shift cancellation
+
+Upcoming assignment cards offer Cancel shift with the shared confirmation dialog. The frontend posts `{ "reason": "advance" }` to `POST /shifts/:id/cancel`, validates the reopened shift and cancellation metadata, and refreshes both user-specific My shifts and Available shifts queries (including inactive queries). Requests are not automatically retried; uncertain outcomes require refreshing before another attempt.
+
+The backend requires authentication, a UUID shift ID, a valid reason, and assignment ownership for nurses. Nurses may only use `advance`; agencies must belong to the shift's agency and may use `advance` or `no-show`; admins are denied. Expired credentials do not prevent cancellation. Assignment release and cancellation history are recorded together under a row lock. Missing shifts return 404 and already-open shifts return 409 after authorization (a nurse whose assignment was already removed can therefore receive 403).
+
+The backend currently has no timing cutoff. The nurse UI offers cancellation only before the shift starts; enforcing this rule across all API clients requires a backend rule. Current and completed assignments have no cancellation button.
