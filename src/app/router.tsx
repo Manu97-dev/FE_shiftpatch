@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom'
 import { useAuth } from '../features/auth/contexts/auth.context'
 import { LoginPage } from '../pages/login/login-page'
+import { RegisterPage } from '../pages/register/register-page'
 import { HomePage } from '../pages/home/home-page'
 
 export function AppRoutes() {
@@ -16,6 +17,7 @@ export function AppRoutes() {
     <Routes>
       <Route path="/" element={<Navigate to={session ? '/home' : '/login'} replace />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
       <Route path="/home" element={session ? <HomePage /> : <Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

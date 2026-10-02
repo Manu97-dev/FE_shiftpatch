@@ -16,3 +16,17 @@ export const loginResponseSchema = z.object({
 
 export type LoginCredentials = z.infer<typeof loginFormSchema>
 export type Session = z.infer<typeof loginResponseSchema>
+
+export const nurseRegistrationSchema = z.object({
+  name: z.string().trim().min(1, 'Enter your full name.').max(200, 'Name is too long.'),
+  email: loginFormSchema.shape.email,
+  password: z.string().min(12, 'Use at least 12 characters.').max(1024, 'Password is too long.'),
+  confirmPassword: z.string().min(1, 'Confirm your password.'),
+  credentialExpirationDate: z.string().regex(/^(?!0000)[0-9]{4}-[0-9]{2}-[0-9]{2}$/, 'Enter a valid expiration date.').refine((value) => {
+    const date = new Date(`${value}T00:00:00Z`)
+    return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value
+  }, 'Enter a valid expiration date.'),
+}).refine((value) => value.password === value.confirmPassword, {
+  message: 'Passwords must match.', path: ['confirmPassword'],
+})
+export type NurseRegistration = z.infer<typeof nurseRegistrationSchema>

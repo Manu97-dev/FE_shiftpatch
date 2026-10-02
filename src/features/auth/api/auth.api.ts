@@ -1,5 +1,5 @@
 import { ApiError, apiRequest } from '../../../shared/api/client'
-import { loginResponseSchema, type LoginCredentials } from './auth.schemas'
+import { loginResponseSchema, type LoginCredentials, type NurseRegistration } from './auth.schemas'
 
 export async function login(credentials: LoginCredentials) {
   const body = await apiRequest('/auth/login', {
@@ -24,4 +24,12 @@ export async function restoreSession(signal?: AbortSignal) {
 
 export async function logout() {
   await apiRequest('/auth/logout', { method: 'POST' })
+}
+
+export async function registerNurse(input: NurseRegistration) {
+  const { name, email, password, credentialExpirationDate } = input
+  const body = await apiRequest('/auth/register/nurse', {
+    method: 'POST', body: JSON.stringify({ name, email, password, credentialExpirationDate }),
+  })
+  return loginResponseSchema.refine((response) => response.user.role === 'nurse').parse(body)
 }

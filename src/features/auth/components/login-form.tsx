@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/auth.context'
 import { loginFormSchema, type LoginCredentials } from '../api/auth.schemas'
 import { login } from '../api/auth.api'
@@ -49,6 +49,7 @@ export function LoginForm() {
               <button type="submit" className={styles.submit}>{mutation.isPending ? 'Signing in…' : 'Sign in'}</button>
             </fieldset>
           </form>
+          <p>New to Shiftpatch? <Link to="/register">Register as a nurse</Link></p>
         </div>
   )
 }

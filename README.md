@@ -200,3 +200,18 @@ The server enforces the same timing rules and agency ownership. On success or
 failure, affected cached shift lists and admin counts are refreshed. Requests
 are not automatically retried. Emails, reminders, and history screens are outside
 this feature.
+
+### Nurse self-registration
+
+The login page links to `/register`, a nurse-only signup form with full name,
+email, password, password confirmation, and self-reported credential expiration
+date. Passwords require at least 12 characters. Signup posts only the server's
+four accepted fields to `/api/auth/register/nurse`, then signs the nurse in
+and opens their home page using the existing cookie/session flow.
+
+The form allows past expiration dates and explains that expired credentials
+block shift claims. There is no credential approval or email verification in
+this initial flow. Agency/admin registration is not offered. Duplicate email,
+validation, server, and network errors retain the form for correction; signup
+requests are not automatically retried. Authenticated visits to `/register`
+redirect to home.
