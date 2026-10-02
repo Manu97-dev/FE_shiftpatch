@@ -59,11 +59,11 @@ export function MyShifts() {
       forbiddenMessage="Your account does not have access to a nurse profile. Please contact your administrator."
       staleMessage="The assignments shown below may be out of date. Please try refreshing."
       onRefresh={() => void query.refetch()} onSignIn={clearSession}>
-      {success && <p role="status">Shift cancelled successfully. Your assignment has been removed.</p>}
+      {success && <p data-testid="notification-banner" role="status">Shift cancelled successfully. Your assignment has been removed.</p>}
       {query.data && !unauthorized && !forbidden && <>
         {shifts.length === 0 ? <div className={styles.state}><h3>No shifts assigned yet</h3><p>Your shifts will appear here once you pick up an assignment.</p></div> : <>
           <h3 className={styles.sectionTitle}>Upcoming & current <span>{upcoming.length}</span></h3>
-          {upcoming.length ? <ShiftList shifts={upcoming} now={now} renderAction={(shift) => shiftTimes(shift).start.getTime() > now ? <button className={styles.button} disabled={mutation.isPending} onClick={() => { mutation.reset(); setSuccess(false); setSelected(shift) }}>Cancel shift</button> : undefined} /> : <div className={styles.state}><h3>No upcoming shifts</h3><p>You have no current or upcoming assignments.</p></div>}
+          {upcoming.length ? <ShiftList shifts={upcoming} now={now} renderAction={(shift) => shiftTimes(shift).start.getTime() > now ? <button data-testid="shift-cancel-button" className={styles.button} disabled={mutation.isPending} onClick={() => { mutation.reset(); setSuccess(false); setSelected(shift) }}>Cancel shift</button> : undefined} /> : <div className={styles.state}><h3>No upcoming shifts</h3><p>You have no current or upcoming assignments.</p></div>}
           {past.length > 0 && <details className={styles.history}><summary>Past assignments ({past.length})</summary><ShiftList shifts={past} now={now} /></details>}
         </>}
       </>}

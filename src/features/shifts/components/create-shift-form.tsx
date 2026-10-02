@@ -42,11 +42,11 @@ export function CreateShiftForm({ agencyId, agencyName, onClose, onCreated }: { 
         </div>
         <p id="overnight-help">{start && end && end < start ? 'Overnight shift: the end time is on the following day.' : 'An end time earlier than the start time means the shift ends the following day.'}</p>
       </fieldset>
-      {mutation.isError && <p role="alert">{createShiftErrorMessage(mutation.error)}</p>}
+      {mutation.isError && <p data-testid="notification-banner" role="alert">{createShiftErrorMessage(mutation.error)}</p>}
       {mutation.error instanceof ApiError && mutation.error.status === 401 && <button type="button" onClick={clearSession}>Sign in again</button>}
       <div className={styles.actions}>
         <button type="button" disabled={pending} className={styles.close} onClick={onClose}>Close form</button>
-        <button type="submit" disabled={pending || blocked}>{pending ? 'Creating…' : 'Create shift'}</button>
+        <button data-testid="agency-post-shift-submit-button" type="submit" disabled={pending || blocked}>{pending ? 'Creating…' : 'Create shift'}</button>
       </div>
     </form>
   </Dialog.Content></Dialog.Portal>

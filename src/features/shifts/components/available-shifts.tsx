@@ -48,9 +48,9 @@ export function AvailableShifts() {
     forbiddenMessage="Your account cannot access the shift marketplace. Please contact your administrator."
     staleMessage="The opportunities shown below may be out of date. Please try refreshing."
     onRefresh={() => void query.refetch()} onSignIn={clearSession}>
-    {success && <p role="status">Shift claimed successfully. You can find it in My shifts.</p>}
+    {success && <p data-testid="notification-banner" role="status">Shift claimed successfully. You can find it in My shifts.</p>}
     {query.data && !unauthorized && !forbidden && <>
-      {shifts.length ? <><h3 className={styles.sectionTitle}>Open opportunities <span>{shifts.length}</span></h3><ShiftList shifts={shifts} now={now} renderAction={(shift) => <button className={styles.claimButton} disabled={mutation.isPending} onClick={() => { mutation.reset(); setSuccess(false); setSelected(shift) }}>Claim shift</button>} /></>
+      {shifts.length ? <><h3 className={styles.sectionTitle}>Open opportunities <span>{shifts.length}</span></h3><ShiftList itemTestId="shift-list-item" shifts={shifts} now={now} renderAction={(shift) => <button data-testid="shift-claim-button" className={styles.claimButton} disabled={mutation.isPending} onClick={() => { mutation.reset(); setSuccess(false); setSelected(shift) }}>Claim shift</button>} /></>
         : <div className={styles.state}><h3>No available shifts right now</h3><p>There are no upcoming open shifts. Check back later or refresh for new opportunities.</p></div>}
     </>}
   </ShiftSection>

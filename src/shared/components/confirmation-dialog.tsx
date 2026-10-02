@@ -15,7 +15,7 @@ export function ConfirmationDialog({ open, onOpenChange, title, description, con
         <Dialog.Title className={styles.title}>{title}</Dialog.Title>
         <Dialog.Description className={styles.description}>{description}</Dialog.Description>
         {children}
-        {error && <div role="alert" className={styles.error}>{error}</div>}
+        {error && <div data-testid="notification-banner" role="alert" className={styles.error}>{error}</div>}
         <div className={styles.actions}>
           <Dialog.Close asChild><button disabled={pending} className={styles.secondary}>{canConfirm ? 'Go back' : 'Close'}</button></Dialog.Close>
           {canConfirm && <button disabled={pending} className={styles.primary} onClick={onConfirm}>{pending ? pendingLabel : confirmLabel}</button>}

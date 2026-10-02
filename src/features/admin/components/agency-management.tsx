@@ -21,7 +21,7 @@ export function AgencyManagement() {
     <div className={styles.heading}><div><h2 id="agency-management-heading">Agencies and members</h2><p>Create agencies and the accounts that manage their shifts.</p></div>
       {!unauthorized && !forbidden && !form && <button onClick={() => { setSuccess(''); setForm('agency') }}>Create agency</button>}
     </div>
-    {success && <p role="status">{success}</p>}
+    {success && <p data-testid="notification-banner" role="status">{success}</p>}
     {query.isPending && <p role="status">Loading agencies…</p>}
     {query.isError && <div role="alert"><p>{unauthorized ? 'Your session has expired.' : forbidden ? 'Admin access is required.' : 'We could not load agencies. Refresh before creating a member.'}</p>
       {unauthorized ? <button onClick={clearSession}>Sign in again</button> : !forbidden && <button disabled={query.isFetching} onClick={() => void query.refetch()}>Retry agencies</button>}</div>}
@@ -82,7 +82,7 @@ function AgencyCreationForm({ agency, onClose, onCreated }: { agency?: AdminAgen
         {errors.password && <p id="creation-password-error" role="alert">{errors.password.message}</p>}
       </>}
     </fieldset>
-    {mutation.isError && <p role="alert">{creationError(mutation.error)}</p>}
+    {mutation.isError && <p data-testid="notification-banner" role="alert">{creationError(mutation.error)}</p>}
     {mutation.error instanceof ApiError && mutation.error.status === 401 && <button type="button" onClick={clearSession}>Sign in again</button>}
     <div className={styles.actions}><button type="button" disabled={pending} onClick={onClose}>Close form</button><button type="submit" disabled={pending || blocked}>{pending ? 'Creating…' : agency ? 'Create member' : 'Save agency'}</button></div>
   </form>

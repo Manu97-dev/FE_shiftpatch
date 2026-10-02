@@ -62,7 +62,7 @@ export function NurseRegistrationForm() {
           {field.name === 'credentialExpirationDate' && <p id="expiration-help">This date is self-reported. Expired credentials prevent you from claiming shifts.</p>}
           {errors[field.name] && <p id={`${field.name}-error`} className={styles.fieldError} role="alert">{errors[field.name]?.message}</p>}
         </div>)}
-        {mutation.isError && <p role="alert" className={styles.error}>{registrationError(mutation.error)}</p>}
+        {mutation.isError && <p data-testid="notification-banner" role="alert" className={styles.error}>{registrationError(mutation.error)}</p>}
         <button type="submit" className={styles.submit}>{mutation.isPending ? 'Creating account…' : 'Create nurse account'}</button>
       </fieldset>
     </form>

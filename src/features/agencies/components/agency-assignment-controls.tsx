@@ -45,7 +45,7 @@ export function AgencyAssignmentControls({ shift, now }: { shift: Shift; now: nu
     }
   }
   return <>
-    {success && <p role="status">{success}</p>}
+    {success && <p data-testid="notification-banner" role="status">{success}</p>}
     {shift.claimedBy !== null && <button className={styles.button} disabled={mutation.isPending} onClick={() => {
       mutation.reset(); setSuccess(null); setReason(start.getTime() > now ? 'advance' : 'no-show')
     }}>{start.getTime() > now ? 'Cancel assignment' : 'Mark no-show'}</button>}

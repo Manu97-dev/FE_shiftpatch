@@ -37,7 +37,7 @@ function AgencyShifts({ agencyId, agencyName }: { agencyId: string; agencyName: 
   const forbidden = query.error instanceof ApiError && query.error.status === 403
   return <Dialog.Root open={creating} onOpenChange={setCreating}><ShiftSection id="agency-shifts" title={query.data?.agencyName ?? "Agency shifts"} description="All shifts for this agency, ordered by schedule."
     loading={query.isPending} fetching={query.isFetching} hasError={query.isError} hasData={Boolean(query.data)} unauthorized={unauthorized} forbidden={forbidden}
-    headerActions={query.data && !unauthorized && !forbidden ? <Dialog.Trigger asChild><button className={styles.button}>New shift</button></Dialog.Trigger> : undefined}
+    headerActions={query.data && !unauthorized && !forbidden ? <Dialog.Trigger asChild><button data-testid="agency-post-shift-button" className={styles.button}>New shift</button></Dialog.Trigger> : undefined}
     loadingMessage="Loading agency shifts…" errorTitle="We could not load agency shifts" forbiddenTitle="Agency access unavailable" forbiddenMessage="No agency membership is linked to your account, or your access has been revoked. Contact your administrator."
     staleMessage="These shifts may be out of date. Please refresh." onRefresh={() => void query.refetch()} onSignIn={clearSession}>
     {query.data && !unauthorized && !forbidden && <>

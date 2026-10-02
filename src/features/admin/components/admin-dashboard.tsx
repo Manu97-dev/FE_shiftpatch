@@ -35,7 +35,7 @@ export function AdminDashboard() {
       {all.isError && filtered && <p role="alert">Agency choices could not be refreshed. Refresh the list to try again.</p>}
       {query.data && !unauthorized && !forbidden && <>
         <p className={styles.resultCount} role="status">{query.data.shifts.length} {query.data.shifts.length === 1 ? 'shift' : 'shifts'}{filtered ? ' matching applied filters' : ' across all agencies'}</p>
-        {query.data.shifts.length ? <ShiftList shifts={query.data.shifts} now={now} /> : <div className={styles.empty}><h3>{filtered ? 'No shifts match your filters' : 'No shifts posted yet'}</h3><p>{filtered ? 'Adjust or clear the filters to see more shifts.' : 'Agency shifts will appear here once they are created.'}</p></div>}
+        {query.data.shifts.length ? <ShiftList testId="admin-dashboard-shift-table" statusTestId="admin-shift-status-badge" shifts={query.data.shifts} now={now} /> : <div className={styles.empty}><h3>{filtered ? 'No shifts match your filters' : 'No shifts posted yet'}</h3><p>{filtered ? 'Adjust or clear the filters to see more shifts.' : 'Agency shifts will appear here once they are created.'}</p></div>}
       </>}
     </ShiftSection>
     </> },

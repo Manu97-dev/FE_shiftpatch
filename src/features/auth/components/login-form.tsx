@@ -33,20 +33,20 @@ export function LoginForm() {
             <fieldset disabled={mutation.isPending}>
               <div className={styles.field}>
                 <label htmlFor="email">Email address</label>
-                <input id="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false}
+                <input data-testid="login-email-input" id="email" type="email" autoComplete="username" autoCapitalize="none" spellCheck={false}
                   placeholder="you@example.com" aria-invalid={Boolean(errors.email)}
                   aria-describedby={errors.email ? 'email-error' : undefined} {...register('email')} />
                 {errors.email && <p id="email-error" className={styles.fieldError} role="alert">{errors.email.message}</p>}
               </div>
               <div className={styles.field}>
                 <label htmlFor="password">Password</label>
-                <input id="password" type="password" autoComplete="current-password"
+                <input data-testid="login-password-input" id="password" type="password" autoComplete="current-password"
                   aria-invalid={Boolean(errors.password)} aria-describedby={errors.password ? 'password-error' : undefined}
                   {...register('password')} />
                 {errors.password && <p id="password-error" className={styles.fieldError} role="alert">{errors.password.message}</p>}
               </div>
-              {mutation.isError && <p role="alert" className={styles.error}>{loginErrorMessage(mutation.error)}</p>}
-              <button type="submit" className={styles.submit}>{mutation.isPending ? 'Signing in…' : 'Sign in'}</button>
+              {mutation.isError && <p data-testid="notification-banner" role="alert" className={styles.error}>{loginErrorMessage(mutation.error)}</p>}
+              <button data-testid="login-submit-button" type="submit" className={styles.submit}>{mutation.isPending ? 'Signing in…' : 'Sign in'}</button>
             </fieldset>
           </form>
           <p>New to Shiftpatch? <Link to="/register">Register as a nurse</Link></p>
