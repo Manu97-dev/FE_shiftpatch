@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes, BrowserRouter } from 'react-router-dom'
 import { useAuth } from '../features/auth/contexts/auth.context'
 import { LoginPage } from '../pages/login/login-page'
-import { NurseHomePage } from '../pages/nurse-home/nurse-home-page'
+import { HomePage } from '../pages/home/home-page'
 
 export function AppRoutes() {
   const { session, status, retryRestore } = useAuth()
@@ -16,7 +16,7 @@ export function AppRoutes() {
     <Routes>
       <Route path="/" element={<Navigate to={session ? '/home' : '/login'} replace />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route path="/home" element={session ? <NurseHomePage /> : <Navigate to="/login" replace />} />
+      <Route path="/home" element={session ? <HomePage /> : <Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

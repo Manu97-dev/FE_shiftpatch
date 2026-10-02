@@ -166,3 +166,9 @@ Upcoming assignment cards offer Cancel shift with the shared confirmation dialog
 The backend requires authentication, a UUID shift ID, a valid reason, and assignment ownership for nurses. Nurses may only use `advance`; agencies must belong to the shift's agency and may use `advance` or `no-show`; admins are denied. Expired credentials do not prevent cancellation. Assignment release and cancellation history are recorded together under a row lock. Missing shifts return 404 and already-open shifts return 409 after authorization (a nurse whose assignment was already removed can therefore receive 403).
 
 The backend currently has no timing cutoff. The nurse UI offers cancellation only before the shift starts; enforcing this rule across all API clients requires a backend rule. Current and completed assignments have no cancellation button.
+
+### Role-specific home
+
+`HomePage` maps authenticated roles to separate nurse, agency, and admin pages through a typed role registry. `HomeLayout` shares the header and sign-out handling. Agency accounts load their agency identity and shifts using `GET /agencies` to discover the single membership, followed by `GET /agencies/:agencyId/shifts`. The backend verifies membership for the requested agency. No selector is shown. Query keys are scoped to the user and agency. Upcoming/current and past shifts reuse the shared shift cards, with loading, empty, retry, authentication, and permission states. Missing or revoked membership shows an access error. Shift creation is the next phase.
+
+Deploy with the matching backend and apply its `0003_single_agency_per_user.sql` migration first. Each agency can have multiple staff users, but each user has at most one agency membership.

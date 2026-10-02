@@ -14,6 +14,7 @@ function setup(path = '/login') {
   vi.stubGlobal('fetch', (url: string, options: RequestInit) => url === '/api/auth/session'
     ? Promise.resolve(new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 }))
     : url === '/api/nurses/me/shifts' ? Promise.resolve(new Response(JSON.stringify({ nurseId: '33333333-3333-4333-8333-333333333333', shifts: [] })))
+    : url === '/api/agencies' ? Promise.resolve(new Response(JSON.stringify({ agency: null })))
     : url === '/api/shifts/available' ? Promise.resolve(new Response(JSON.stringify({ shifts: [] })))
     : originalFetch(url, options))
   const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
@@ -31,7 +32,7 @@ async function submit(actor: ReturnType<typeof userEvent.setup>, password = 'pas
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
 
 describe('login flow', () => {
-  it.each(['admin', 'agency', 'nurse'])('accepts a valid %s response and opens empty home', async (role) => {
+  it.each(['admin', 'agency', 'nurse'])('accepts a valid %s response and opens the role-specific home', async (role) => {
     const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({ token: 'access-token', user: { ...user, role } })))
     vi.stubGlobal('fetch', fetchMock)
     const actor = setup()
