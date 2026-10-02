@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../features/auth/contexts/auth.context'
-import { AvailableShifts } from '../../features/shifts/components/available-shifts'
-import { MyShifts } from '../../features/shifts/components/my-shifts'
+import { NurseShiftTabs } from '../../features/shifts/components/nurse-shift-tabs'
 import styles from './nurse-home-page.module.scss'
 
 export function NurseHomePage() {
@@ -27,8 +26,7 @@ export function NurseHomePage() {
         <p className={styles.eyebrow}>Nurse home</p>
         <h1>Welcome back, {session.user.name.split(' ')[0]}.</h1>
         <p className={styles.intro}>Keep track of your schedule and the care ahead.</p>
-        <MyShifts />
-        <AvailableShifts />
+        <NurseShiftTabs />
       </> : <><h1>Welcome, {session?.user.name}.</h1><p>Your workspace is coming soon.</p></>}
     </main>
   </div>

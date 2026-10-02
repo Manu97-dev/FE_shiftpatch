@@ -99,8 +99,8 @@ cancellation remain separate follow-up phases.
 
 ## Available shifts
 
-Nurse home stacks My shifts above Available shifts, preserving a commitments-first
-layout on desktop and mobile. The marketplace uses GET /api/shifts/available and validates the shared shift
+Nurse home uses My shifts and Available shifts tabs, with My shifts selected
+by default. The marketplace uses GET /api/shifts/available and validates the shared shift
 contract. The backend filters upcoming unassigned shifts and orders by start time
 and ID; the frontend displays the result without filtering or reordering it. Each section has its own query
 and refresh/retry controls, so a marketplace failure does not hide assignments.
@@ -130,3 +130,14 @@ UI. Shared code serves unrelated features. Domain UI such as ShiftCard stays in
 the shifts feature even when multiple pages reuse it. Tests and Sass Modules stay
 next to the code they cover; the shift presentation components share their section
 stylesheet. No empty placeholder folders or barrel exports are required.
+
+## Nurse home tabs
+
+shared/components/tabs.tsx wraps Radix Tabs with accessible keyboard navigation,
+optional counts, and mounted but hidden inactive panels. Each panel scrolls
+independently and retains its scroll position and disclosure state when switching.
+The tab controls stay outside the scroll area so Available shifts remains visible
+even with many assignments. NurseShiftTabs composes the domain-specific sections.
+My shifts counts upcoming/current assignments; Available shifts counts server
+results. Counts are omitted until data loads. Queries share existing keys and
+TanStack Query deduplicates requests between count and section observers.
