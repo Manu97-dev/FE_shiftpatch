@@ -29,12 +29,13 @@ it.each([401, 403, 500])('handles agency shift lookup error %s', async (status) 
   await screen.findByRole('alert')
   expect(screen.queryByText('No shifts posted yet')).toBeNull()
 })
-it('keeps admin home separate and makes no shift requests', () => {
-  const fetchMock = vi.fn()
+it('routes admin home to the global shift overview', async () => {
+  const fetchMock = vi.fn(async (url: string) => new Response(JSON.stringify(url.includes('/summary') ? { asOf: '2026-10-02T06:00:00Z', upcomingOpen: 0, upcomingAssigned: 0, upcomingTotal: 0 } : { shifts: [] })))
   vi.stubGlobal('fetch', fetchMock)
   mount('admin')
-  expect(screen.getByRole('heading', { name: 'Admin workspace' })).toBeTruthy()
-  expect(fetchMock).not.toHaveBeenCalled()
+  expect(screen.getByRole('heading', { name: 'Shift overview' })).toBeTruthy()
+  await screen.findByText('No shifts posted yet')
+  expect(fetchMock.mock.calls.every(([url]) => url === '/api/shifts' || url === '/api/admin/shifts/summary')).toBe(true)
 })
 it('routes nurses to their existing home and APIs', async () => {
   const fetchMock = vi.fn(async (url: string) => new Response(JSON.stringify(url.includes('/nurses/') ? { nurseId: a, shifts: [] } : { shifts: [] })))

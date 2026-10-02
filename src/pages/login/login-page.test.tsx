@@ -15,6 +15,8 @@ function setup(path = '/login') {
     ? Promise.resolve(new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 }))
     : url === '/api/nurses/me/shifts' ? Promise.resolve(new Response(JSON.stringify({ nurseId: '33333333-3333-4333-8333-333333333333', shifts: [] })))
     : url === '/api/agencies' ? Promise.resolve(new Response(JSON.stringify({ agency: null })))
+    : url === '/api/admin/shifts/summary' ? Promise.resolve(new Response(JSON.stringify({ asOf: '2026-10-02T06:00:00Z', upcomingOpen: 0, upcomingAssigned: 0, upcomingTotal: 0 })))
+    : url === '/api/shifts' ? Promise.resolve(new Response(JSON.stringify({ shifts: [] })))
     : url === '/api/shifts/available' ? Promise.resolve(new Response(JSON.stringify({ shifts: [] })))
     : originalFetch(url, options))
   const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
