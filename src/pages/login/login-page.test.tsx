@@ -19,6 +19,7 @@ function setup(path = '/login') {
     : url === '/api/admin/shifts/summary' ? Promise.resolve(new Response(JSON.stringify({ asOf: '2026-10-02T06:00:00Z', upcomingOpen: 0, upcomingAssigned: 0, upcomingTotal: 0 })))
     : url === '/api/shifts' ? Promise.resolve(new Response(JSON.stringify({ shifts: [] })))
     : url === '/api/shifts/available' ? Promise.resolve(new Response(JSON.stringify({ shifts: [] })))
+    : url === '/api/credentials/' ? Promise.resolve(new Response(JSON.stringify({ documents: [], selfReportedExpiry: '2027-01-01' })))
     : originalFetch(url, options))
   const client = new QueryClient({ defaultOptions: { mutations: { retry: false } } })
   render(<QueryClientProvider client={client}><AuthProvider><MemoryRouter initialEntries={[path]}><AppRoutes /></MemoryRouter></AuthProvider></QueryClientProvider>)

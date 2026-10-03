@@ -1,3 +1,4 @@
+import { CredentialDocuments } from '../../credentials/credential-documents'
 import { CancellationHistory } from '../../shifts/components/cancellation-history'
 import { AuditOverview } from './audit-overview'
 import { Tabs } from '../../../shared/components/tabs'
@@ -43,6 +44,7 @@ export function AdminDashboard() {
     </> },
     { value: 'cancellations', label: 'Cancellations', content: <CancellationHistory /> },
     { value: 'audit', lazy: true, label: 'Audit log', content: <AuditOverview /> },
+    { value: 'credentials', label: 'Credentials', lazy: true, content: <CredentialDocuments /> },
     { value: 'agencies', label: 'Agencies', content: <AgencyManagement /> },
   ]} />
 }
