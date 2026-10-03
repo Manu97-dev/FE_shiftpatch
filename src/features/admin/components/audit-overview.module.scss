@@ -1,8 +1,14 @@
-.events { list-style: none; padding: 0; display: grid; gap: 1rem;
-  li { border: 1px solid var(--color-border, #d6d9df); border-radius: 0.75rem; padding: 1rem; }
-  h3 { margin: 0 0 0.5rem; }
-  dl { margin-bottom: 0; }
-  dt { font-weight: 600; margin-top: 0.5rem; }
-  dd { margin-left: 0; overflow-wrap: anywhere; }
+.tableScroll { max-width: 100%; overflow-x: auto; border: 1px solid var(--color-border); border-radius: 0.75rem; }
+.table {
+  width: 100%; min-width: 48rem; border-collapse: collapse; text-align: left; font-size: 0.875rem;
+  th, td { padding: 0.75rem; vertical-align: top; }
+  th { background: var(--color-background); font-weight: 600; white-space: nowrap; }
+  tbody tr { border-top: 1px solid var(--color-border); }
+  tbody tr:nth-child(even) { background: var(--color-background); }
+  time { white-space: nowrap; }
 }
+.identifier { display: block; overflow-wrap: anywhere; min-width: 10rem; font-family: ui-monospace, monospace; font-size: 0.8rem; }
+.targetType { display: block; margin-bottom: 0.25rem; color: var(--color-muted); }
+.identifierCell { min-width: 10rem; overflow-wrap: anywhere; font-family: ui-monospace, monospace; font-size: 0.8rem; }
+.contextCell { min-width: 7rem; overflow-wrap: anywhere; }
 .pagination { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }

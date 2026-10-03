@@ -12,6 +12,17 @@ const responseSchema = z.object({ events: z.array(z.object({
 })), nextCursor: cursorSchema.nullable() })
 type Cursor = z.infer<typeof cursorSchema>
 const labels: Record<string, string> = { 'shift.created': 'Shift created', 'shift.claimed': 'Shift claimed', 'shift.cancelled': 'Assignment cancelled', 'agency.created': 'Agency created', 'agency.member_created': 'Agency member created', 'account.registered': 'Account registered' }
+const contextColumns = [
+  { key: 'agencyId', label: 'Agency ID', identifier: true },
+  { key: 'name', label: 'Agency name' },
+  { key: 'role', label: 'Role' },
+  { key: 'startsAt', label: 'Shift start', timestamp: true },
+  { key: 'endsAt', label: 'Shift end', timestamp: true },
+  { key: 'nurseId', label: 'Nurse ID', identifier: true },
+  { key: 'previousNurseId', label: 'Previous nurse ID', identifier: true },
+  { key: 'reason', label: 'Cancellation reason' },
+  { key: 'membershipId', label: 'Membership ID', identifier: true },
+]
 export function AuditOverview() {
   const { session, clearSession } = useAuth()
   const [pages, setPages] = useState<(Cursor | undefined)[]>([undefined])
@@ -30,13 +41,25 @@ export function AuditOverview() {
     loadingMessage="Loading audit log…" errorTitle="We could not load the audit log" forbiddenTitle="Admin access unavailable" forbiddenMessage="Your account cannot access the audit log."
     staleMessage="These records may be out of date. Please refresh." onSignIn={clearSession} onRefresh={() => { void query.refetch() }}>
     {query.data && !unauthorized && !forbidden && <>
-      {query.data.events.length ? <ol className={styles.events}>{query.data.events.map(event => <li key={event.id}>
-        <h3>{labels[event.action] ?? event.action}</h3>
-        <time dateTime={event.occurredAt}>{new Date(event.occurredAt).toLocaleString()}</time>
-        <dl><dt>Actor</dt><dd>{event.actorId}</dd><dt>Target ({event.targetType})</dt><dd>{event.targetId}</dd>
-          {Object.entries(event.context).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{value}</dd></div>)}
-        </dl>
-      </li>)}</ol> : <p>No audit records yet. New successful actions will appear here.</p>}
+      {query.data.events.length ? <div className={styles.tableScroll} role="region" aria-label="Audit records" tabIndex={0}>
+        <table className={styles.table} aria-label="Audit log">
+          <thead><tr><th scope="col">Timestamp</th><th scope="col">Action</th><th scope="col">Actor</th><th scope="col">Target</th>{contextColumns.map(column => <th key={column.key} scope="col">{column.label}</th>)}</tr></thead>
+          <tbody>{query.data.events.map(event => <tr key={event.id}>
+            <td><time dateTime={event.occurredAt}>{new Date(event.occurredAt).toLocaleString()}</time></td>
+            <td>{labels[event.action] ?? event.action}</td>
+            <td className={styles.identifier}>{event.actorId}</td>
+            <td><span className={styles.targetType}>{event.targetType}</span><span className={styles.identifier}>{event.targetId}</span></td>
+            {contextColumns.map(column => {
+              const value = event.context[column.key]
+              return <td key={column.key} className={column.identifier ? styles.identifierCell : styles.contextCell}>
+                {value && column.timestamp && Number.isFinite(Date.parse(value))
+                  ? <time dateTime={value}>{new Date(value).toLocaleString()}</time>
+                  : value || '—'}
+              </td>
+            })}
+          </tr>)}</tbody>
+        </table>
+      </div> : <p>No audit records yet. New successful actions will appear here.</p>}
       <div className={styles.pagination}>
         <button disabled={pages.length === 1 || query.isFetching} onClick={() => setPages(previous => previous.slice(0, -1))}>Newer records</button>
         <span>Page {pages.length}</span>

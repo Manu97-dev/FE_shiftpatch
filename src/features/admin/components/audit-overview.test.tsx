@@ -18,13 +18,13 @@ it('renders safe event fields and navigates older and newer pages', async () => 
     events: [{ ...cursor, actorId: id, action: 'agency.created', targetType: 'agency', targetId: id, context: { name: 'Sunrise' } }], nextCursor: cursor,
   })))
   vi.stubGlobal('fetch', fetchMock); mount()
-  await screen.findByRole('heading', { name: 'Agency created' })
+  await screen.findByRole('cell', { name: 'Agency created' })
   expect(screen.getByText('Sunrise')).toBeTruthy()
   await userEvent.click(screen.getByRole('button', { name: 'Older records' }))
   await screen.findByText(/No audit records yet/)
   expect(fetchMock.mock.calls.at(-1)![0]).toContain('beforeId=')
   await userEvent.click(screen.getByRole('button', { name: 'Newer records' }))
-  await screen.findByRole('heading', { name: 'Agency created' })
+  await screen.findByRole('cell', { name: 'Agency created' })
 })
 it('shows a recoverable error', async () => {
   vi.stubGlobal('fetch', vi.fn(async () => new Response('{}', { status: 500 }))); mount()
