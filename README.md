@@ -242,3 +242,15 @@ before the final frontend deployment. The API rewrite must stay ahead of the
 SPA fallback. Keep VITE_API_BASE_URL=/api so the browser uses same-origin API
 requests and preserves session cookies. Database/password secrets belong only
 in backend settings. Provider accounts and URLs are required to finish setup.
+
+## Continuous integration
+
+GitHub Actions runs **Frontend CI / Frontend checks** on every push and pull
+request, with a manual run option. It uses Node 22 from .node-version, installs
+locked dependencies with npm ci, and runs type checking, lint, tests, and the
+production build. CI needs no secrets or deployed backend. Read-only repository
+permissions and automatic cancellation of superseded runs keep checks bounded.
+
+To prevent merging failing changes, configure the default branch ruleset to
+require pull requests and the **Frontend checks** status check after the first
+workflow run. Adding the workflow alone does not enforce branch protection.
