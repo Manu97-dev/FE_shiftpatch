@@ -3,6 +3,6 @@
 .trigger { flex: 1; display: flex; align-items: center; justify-content: center; gap: .6rem; padding: .9rem .6rem; border: 0; border-radius: .5rem; font-weight: 650; background: transparent; color: var(--color-muted); }
 .trigger[data-state='active'] { background: var(--color-accent); color: var(--color-background); }
 .count { font-size: .75rem; border: 1px solid currentColor; border-radius: 2rem; min-width: 1.5rem; padding: .15rem .35rem; }
-.panel { max-height: clamp(18rem, 60dvh, 45rem); overflow-y: auto; overscroll-behavior-y: contain; scrollbar-gutter: stable; padding: .25rem .25rem 1rem; }
+.panel { padding: .25rem .25rem 1rem; }
 .panel[hidden] { display: none; }
 @media (max-width: 420px) { .trigger { font-size: .85rem; gap: .4rem; } }

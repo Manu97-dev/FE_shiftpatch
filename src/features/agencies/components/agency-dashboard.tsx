@@ -1,3 +1,5 @@
+import { CancellationHistory } from '../../shifts/components/cancellation-history'
+import { Tabs } from '../../../shared/components/tabs'
 import { AgencyAssignmentControls } from './agency-assignment-controls'
 import { Dialog } from 'radix-ui'
 import { useState } from 'react'
@@ -23,7 +25,10 @@ export function AgencyDashboard() {
     </div>
   }
   if (!query.data.agency) return <div className={styles.state}><h2>No agency linked to your account</h2><p>Contact your administrator to set up access.</p><button className={styles.button} onClick={() => void query.refetch()}>Refresh</button></div>
-  return <AgencyShifts key={query.data.agency.id} agencyId={query.data.agency.id} agencyName={query.data.agency.name} />
+  return <Tabs key={query.data.agency.id} label="Agency workspace" defaultValue="shifts" items={[
+    { value: 'shifts', label: 'Shifts', content: <AgencyShifts agencyId={query.data.agency.id} agencyName={query.data.agency.name} /> },
+    { value: 'cancellations', label: 'Cancellations', content: <CancellationHistory /> },
+  ]} />
 }
 function AgencyShifts({ agencyId, agencyName }: { agencyId: string; agencyName: string }) {
   const [creating, setCreating] = useState(false)

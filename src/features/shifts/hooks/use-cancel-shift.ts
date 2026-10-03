@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../../auth/contexts/auth.context'
 import { nurseKeys } from '../../nurses/api/nurses.keys'
-import { shiftKeys } from '../api/shifts.keys'
 import { cancelShift } from '../api/shifts.api'
 
 export function useCancelShift() {
@@ -16,7 +15,7 @@ export function useCancelShift() {
     onSuccess: async () => {
       await Promise.all([
         client.invalidateQueries({ queryKey: nurseKeys.myShifts(session?.user.id), refetchType: 'all' }),
-        client.invalidateQueries({ queryKey: shiftKeys.available(session?.user.id), refetchType: 'all' }),
+        client.invalidateQueries({ queryKey: ['shifts'], refetchType: 'all' }),
       ])
     },
   })

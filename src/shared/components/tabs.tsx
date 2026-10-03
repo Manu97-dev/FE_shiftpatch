@@ -14,8 +14,8 @@ interface Props {
   label: string
 }
 
-// Keep panels mounted to preserve form state, disclosure state, and each panel's
-// own scroll offset. Inactive panels are hidden from layout and accessibility.
+// Keep panels mounted to preserve form and disclosure state.
+// Inactive panels are hidden from layout and accessibility.
 export function Tabs({ items, defaultValue, label }: Props) {
   const [value, setValue] = useState(defaultValue)
   return <RadixTabs.Root value={value} onValueChange={setValue} className={styles.root}>

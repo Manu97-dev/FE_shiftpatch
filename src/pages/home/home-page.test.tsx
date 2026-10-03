@@ -14,13 +14,13 @@ function mount(role: 'agency' | 'nurse' | 'admin' = 'agency') {
 }
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
 it('loads the authenticated agency directly without an agency selector', async () => {
-  const fetchMock = vi.fn(async (url: string) => new Response(JSON.stringify(url === '/api/agencies' ? { agency: { id: a, name: 'Sunrise' } } : { agencyId: a, agencyName: 'Sunrise', shifts: [] })))
+  const fetchMock = vi.fn(async (url: string) => new Response(JSON.stringify(url.includes('/cancellations') ? { cancellations: [], hasMore: false } : url === '/api/agencies' ? { agency: { id: a, name: 'Sunrise' } } : { agencyId: a, agencyName: 'Sunrise', shifts: [] })))
   vi.stubGlobal('fetch', fetchMock)
   mount()
   await screen.findByRole('heading', { name: 'Sunrise' })
   await screen.findByText('No shifts posted yet')
   expect(screen.queryByRole('combobox')).toBeNull()
-  expect(fetchMock.mock.calls).toHaveLength(2)
+  expect(fetchMock.mock.calls).toHaveLength(3)
   expect(fetchMock.mock.calls[1]![0]).toBe(`/api/agencies/${a}/shifts`)
 })
 it.each([401, 403, 500])('handles agency shift lookup error %s', async (status) => {
@@ -30,12 +30,12 @@ it.each([401, 403, 500])('handles agency shift lookup error %s', async (status) 
   expect(screen.queryByText('No shifts posted yet')).toBeNull()
 })
 it('routes admin home to the global shift overview', async () => {
-  const fetchMock = vi.fn(async (url: string) => new Response(JSON.stringify(url === '/api/admin/agencies' ? { agencies: [] } : url.includes('/summary') ? { asOf: '2026-10-02T06:00:00Z', upcomingOpen: 0, upcomingAssigned: 0, upcomingTotal: 0 } : { shifts: [] })))
+  const fetchMock = vi.fn(async (url: string) => new Response(JSON.stringify(url.includes('/cancellations') ? { cancellations: [], hasMore: false } : url === '/api/admin/agencies' ? { agencies: [] } : url.includes('/summary') ? { asOf: '2026-10-02T06:00:00Z', upcomingOpen: 0, upcomingAssigned: 0, upcomingTotal: 0 } : { shifts: [] })))
   vi.stubGlobal('fetch', fetchMock)
   mount('admin')
   expect(screen.getByRole('heading', { name: 'Shift overview' })).toBeTruthy()
   await screen.findByText('No shifts posted yet')
-  expect(fetchMock.mock.calls.every(([url]) => url === '/api/shifts' || url === '/api/admin/shifts/summary' || url === '/api/admin/agencies')).toBe(true)
+  expect(fetchMock.mock.calls.every(([url]) => url === '/api/shifts' || url === '/api/admin/shifts/summary' || url === '/api/admin/agencies' || url.startsWith('/api/shifts/cancellations?'))).toBe(true)
 })
 it('routes nurses to their existing home and APIs', async () => {
   const fetchMock = vi.fn(async (url: string) => new Response(JSON.stringify(url.includes('/nurses/') ? { nurseId: a, shifts: [] } : { shifts: [] })))
@@ -45,7 +45,7 @@ it('routes nurses to their existing home and APIs', async () => {
   expect(fetchMock.mock.calls.every(([url]) => !url.includes('/agencies/'))).toBe(true)
 })
 it('rejects a response containing another agency’s shifts', async () => {
-  vi.stubGlobal('fetch', vi.fn(async (url: string) => new Response(JSON.stringify(url === '/api/agencies' ? { agency: { id: a, name: 'Sunrise' } } : { agencyId: a, agencyName: 'Sunrise', shifts: [{
+  vi.stubGlobal('fetch', vi.fn(async (url: string) => new Response(JSON.stringify(url.includes('/cancellations') ? { cancellations: [], hasMore: false } : url === '/api/agencies' ? { agency: { id: a, name: 'Sunrise' } } : { agencyId: a, agencyName: 'Sunrise', shifts: [{
     id: '40000000-0000-4000-8000-000000000001', agencyId: b, agencyName: 'Metro', role: 'RN', date: '2099-10-01', startTime: '07:00', endTime: '19:00', status: 'open', claimedBy: null,
   }] }))))
   mount()

@@ -41,7 +41,7 @@ describe('login flow', () => {
     const actor = setup()
     await submit(actor, ' password ')
     await screen.findByRole('main', { name: 'Home' })
-    expect(fetchMock).toHaveBeenCalledTimes(1)
+    expect(fetchMock.mock.calls.filter(([url]) => url === '/api/auth/login')).toHaveLength(1)
     const [url, options] = fetchMock.mock.calls[0]!
     expect(url).toBe('/api/auth/login')
     expect(options.method).toBe('POST')

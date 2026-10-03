@@ -1,3 +1,4 @@
+import { CancellationHistory } from '../../shifts/components/cancellation-history'
 import { Tabs } from '../../../shared/components/tabs'
 import { AgencyManagement } from './agency-management'
 import { useState } from 'react'
@@ -39,6 +40,7 @@ export function AdminDashboard() {
       </>}
     </ShiftSection>
     </> },
+    { value: 'cancellations', label: 'Cancellations', content: <CancellationHistory /> },
     { value: 'agencies', label: 'Agencies', content: <AgencyManagement /> },
   ]} />
 }

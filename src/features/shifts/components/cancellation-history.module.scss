@@ -1,0 +1,9 @@
+.card { min-width: 0; overflow-wrap: anywhere; }
+.title { margin: 0; font-size: 1.1rem; line-height: 1.5; }
+.schedule { margin: 0; line-height: 1.7; }
+.recorded { margin: 1rem 0 0; color: var(--color-muted); font-size: .85rem; line-height: 1.6; }
+.references { margin-top: 1.25rem; border-top: 1px solid var(--color-border); padding-top: 1rem;
+  summary { cursor: pointer; font-size: .85rem; font-weight: 600; }
+  p { font-size: .8rem; color: var(--color-muted); line-height: 1.6; }
+}
+.pagination { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.5rem; }
