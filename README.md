@@ -232,3 +232,13 @@ admin; no invitation email is sent. Duplicate emails are rejected, not linked or
 reassigned. Member editing, deletion, reassignment, and password reset are outside
 this creation feature. Requests are not automatically retried, and affected
 agency lists refresh after creation attempts.
+
+### Interview hosting
+
+Use Vercel Hobby with Render Free and Neon Free. See the backend repository's
+DEPLOYMENT.md for the complete setup order. Copy vercel.json.example to
+vercel.json, replacing REPLACE_WITH_BACKEND_HOST with the actual Render host,
+before the final frontend deployment. The API rewrite must stay ahead of the
+SPA fallback. Keep VITE_API_BASE_URL=/api so the browser uses same-origin API
+requests and preserves session cookies. Database/password secrets belong only
+in backend settings. Provider accounts and URLs are required to finish setup.
