@@ -1,0 +1,8 @@
+.events { list-style: none; padding: 0; display: grid; gap: 1rem;
+  li { border: 1px solid var(--color-border, #d6d9df); border-radius: 0.75rem; padding: 1rem; }
+  h3 { margin: 0 0 0.5rem; }
+  dl { margin-bottom: 0; }
+  dt { font-weight: 600; margin-top: 0.5rem; }
+  dd { margin-left: 0; overflow-wrap: anywhere; }
+}
+.pagination { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }

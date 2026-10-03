@@ -6,6 +6,7 @@ export interface TabItem {
   value: string
   label: string
   count?: number
+  lazy?: boolean
   content: ReactNode
 }
 interface Props {
@@ -18,7 +19,8 @@ interface Props {
 // Inactive panels are hidden from layout and accessibility.
 export function Tabs({ items, defaultValue, label }: Props) {
   const [value, setValue] = useState(defaultValue)
-  return <RadixTabs.Root value={value} onValueChange={setValue} className={styles.root}>
+  const [visited, setVisited] = useState(() => new Set([defaultValue]))
+  return <RadixTabs.Root value={value} onValueChange={(next) => { setValue(next); setVisited(previous => new Set([...previous, next])) }} className={styles.root}>
     <RadixTabs.List aria-label={label} className={styles.list}>
       {items.map((item) => <RadixTabs.Trigger key={item.value} value={item.value} className={styles.trigger}>
         {item.label}{' '}{item.count !== undefined && <span className={styles.count}>{item.count}</span>}
@@ -26,7 +28,7 @@ export function Tabs({ items, defaultValue, label }: Props) {
     </RadixTabs.List>
     {items.map((item) => <RadixTabs.Content key={item.value} value={item.value} forceMount
       hidden={value !== item.value} className={styles.panel}>
-      {item.content}
+      {(!item.lazy || visited.has(item.value)) && item.content}
     </RadixTabs.Content>)}
   </RadixTabs.Root>
 }
