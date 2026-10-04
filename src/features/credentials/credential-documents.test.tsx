@@ -1,12 +1,15 @@
 // @vitest-environment jsdom
 import { afterEach, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthContext } from '../auth/contexts/auth.context'
 import { CredentialDocuments } from './credential-documents'
 function mount(role: 'nurse' | 'admin' = 'nurse') {
-  render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><AuthContext.Provider value={{ session: { token: 'token', user: { id: '20000000-0000-4000-8000-000000000001', name: 'Select Alex', role } }, status: 'ready', signIn: vi.fn(), signOut: vi.fn(), clearSession: vi.fn(), retryRestore: vi.fn() }}><CredentialDocuments /></AuthContext.Provider></QueryClientProvider>)
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } })
+  const invalidate = vi.spyOn(client, 'invalidateQueries')
+  render(<QueryClientProvider client={client}><AuthContext.Provider value={{ session: { token: 'token', user: { id: '20000000-0000-4000-8000-000000000001', name: 'Select Alex', role } }, status: 'ready', signIn: vi.fn(), signOut: vi.fn(), clearSession: vi.fn(), retryRestore: vi.fn() }}><CredentialDocuments /></AuthContext.Provider></QueryClientProvider>)
+  return invalidate
 }
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
 it('shows loading and empty state while separating self-reported expiry', async () => {
@@ -30,11 +33,12 @@ it('admin sees nurse names and downloads without mutation controls', async () =>
 })
 it('uploads PDF with bearer authentication and refreshes documents', async () => {
   const fetchMock = vi.fn(async (_url: string, options: RequestInit) => new Response(JSON.stringify(options.method === 'POST' ? {} : { documents: [], selfReportedExpiry: '2027-01-01' })))
-  vi.stubGlobal('fetch', fetchMock); mount(); await screen.findByText('No credential documents uploaded yet.')
+  vi.stubGlobal('fetch', fetchMock); const invalidate = mount(); await screen.findByText('No credential documents uploaded yet.')
   const actor = userEvent.setup()
   fireEvent.change(screen.getByLabelText('Document expiry date'), { target: { value: '2027-01-01' } })
   await actor.upload(screen.getByLabelText('Document file'), new File(['%PDF-1.7'], 'license.pdf', { type: 'application/pdf' }))
   await screen.findByText('Document uploaded.')
+  await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: ['shifts'], refetchType: 'all' }))
   const call = fetchMock.mock.calls.find(([, options]) => options.method === 'POST')!
   expect(new Headers(call[1].headers).get('Authorization')).toBe('Bearer token')
   expect(JSON.parse(String(call[1].body))).toMatchObject({ kind: 'nurse_license', filename: 'license.pdf', expiresOn: '2027-01-01', mimeType: 'application/pdf', data: 'JVBERi0xLjc=' })
@@ -71,4 +75,14 @@ it('requires explicit nurse selection and displays export failure without downlo
   const call = fetchMock.mock.calls.find(([, options]) => options.method === 'POST')!
   expect(JSON.parse(String(call[1].body))).toEqual({ nurseIds: ['10000000-0000-4000-8000-000000000002'] })
   expect(new Headers(call[1].headers).get('Authorization')).toBe('Bearer token')
+})
+
+it('expiry corrections refresh shift eligibility', async () => {
+  vi.stubGlobal('fetch', vi.fn(async (_url: string, options: RequestInit) => new Response(JSON.stringify(options.method === 'PATCH' ? {} : { documents: [{ id: '10000000-0000-4000-8000-000000000001', kind: 'tb_test', filename: 'tb.pdf', expiresOn: '2027-01-01', size: 100 }], selfReportedExpiry: '2027-01-01' }))))
+  const invalidate = mount()
+  await screen.findByLabelText('Expiry date for tb.pdf')
+  fireEvent.change(screen.getByLabelText('Expiry date for tb.pdf'), { target: { value: '2028-01-01' } })
+  await userEvent.click(screen.getByRole('button', { name: 'Save expiry' }))
+  await screen.findByText('Expiry date saved.')
+  await waitFor(() => expect(invalidate).toHaveBeenCalledWith({ queryKey: ['shifts'], refetchType: 'all' }))
 })

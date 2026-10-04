@@ -7,6 +7,7 @@ export const shiftSchema = z.object({
     const date = new Date(`${value}T00:00:00Z`)
     return Number.isFinite(date.getTime()) && date.toISOString().slice(0, 10) === value
   }),
+  eligibility: z.object({ eligible: z.boolean(), reasons: z.array(z.string()) }).optional(),
   startTime: time, endTime: time, status: z.enum(['open', 'filled']), claimedBy: z.string().uuid().nullable(),
 })
 export type Shift = z.infer<typeof shiftSchema>

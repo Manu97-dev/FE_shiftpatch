@@ -71,3 +71,10 @@ it('offers sign-in again on an expired session', async () => {
   await userEvent.click(screen.getByRole('button', { name: 'Sign in again' }))
   expect(clearSession).toHaveBeenCalledOnce()
 })
+
+it('shows actionable credential reasons and disables an ineligible claim', async () => {
+  vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ shifts: [{ ...shift, eligibility: { eligible: false, reasons: ['Profile credential expiry must cover this shift.'] } }] }))))
+  mount()
+  expect(await screen.findByText('Profile credential expiry must cover this shift.')).toBeTruthy()
+  expect(screen.getByRole('button', { name: 'Claim shift' }).hasAttribute('disabled')).toBe(true)
+})

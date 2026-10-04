@@ -19,6 +19,7 @@ export function CredentialDocuments() {
   const [downloadError, setDownloadError] = useState('')
   const [downloading, setDownloading] = useState<string | null>(null)
   const query = useQuery({ queryKey: key, queryFn: async () => listSchema.parse(await apiRequest('credentials/', { token })), enabled: !!token })
+  async function refreshEligibility() { await Promise.all([client.invalidateQueries({ queryKey: key }), client.invalidateQueries({ queryKey: ['shifts'], refetchType: 'all' })]) }
   const upload = useMutation({
     mutationFn: async (form: HTMLFormElement) => {
       const kind = (form.elements.namedItem('kind') as HTMLSelectElement).value
@@ -30,9 +31,9 @@ export function CredentialDocuments() {
       form.reset()
     },
     onError: (_error, form) => { (form.elements.namedItem('document') as HTMLInputElement).value = '' },
-    onSuccess: () => { setMessage('Document uploaded.'); void client.invalidateQueries({ queryKey: key }) },
+    onSuccess: async () => { await refreshEligibility(); setMessage('Document uploaded.') },
   })
-  const update = useMutation({ mutationFn: ({ id, expiresOn }: { id: string; expiresOn: string }) => apiRequest(`credentials/${id}`, { token, method: 'PATCH', body: JSON.stringify({ expiresOn }) }), onSuccess: () => { setMessage('Expiry date saved.'); void client.invalidateQueries({ queryKey: key }) } })
+  const update = useMutation({ mutationFn: ({ id, expiresOn }: { id: string; expiresOn: string }) => apiRequest(`credentials/${id}`, { token, method: 'PATCH', body: JSON.stringify({ expiresOn }) }), onSuccess: async () => { await refreshEligibility(); setMessage('Expiry date saved.') } })
   async function download(id: string, filename: string) {
     setDownloading(id); clearFeedback()
     try {
@@ -55,7 +56,7 @@ export function CredentialDocuments() {
   return <section className={styles.section} aria-labelledby="credentials-title">
     <h2 id="credentials-title">Credential documents</h2>
     <p>Private nurse license documents and TB test results. Dates are self-reported.</p>
-    {query.data?.autoApprovalEnabled ? <p className={styles.demoNotice}>Demo auto-approval enabled. License uploads and edits to the latest license update the expiry date used for shift claims. TB test dates stay separate. This is not professional verification.</p> : <p>Uploading does not verify a credential or change shift eligibility.</p>}
+    {query.data?.autoApprovalEnabled ? <p className={styles.demoNotice}>Demo auto-approval enabled. License uploads and edits to the latest license update the expiry date used for shift claims. TB uploads are optional and do not affect claims. This is not professional verification.</p> : <p>Shift eligibility uses your nurse profile expiry date only. Uploads are optional and do not professionally verify credentials.</p>}
     {!admin && <>
       {query.data && <p>{query.data.autoApprovalEnabled ? 'Credential expiry used for shift claims' : 'Existing self-reported credential expiry'}: {query.data.selfReportedExpiry}.{!query.data.autoApprovalEnabled && ' Document dates are tracked separately.'}</p>}
       <form onSubmit={submit} onChange={event => { if (!(event.target instanceof HTMLInputElement && event.target.type === 'file')) clearFeedback() }} className={styles.form}>

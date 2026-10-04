@@ -50,7 +50,7 @@ export function AvailableShifts() {
     onRefresh={() => void query.refetch()} onSignIn={clearSession}>
     {success && <p data-testid="notification-banner" role="status">Shift claimed successfully. You can find it in My shifts.</p>}
     {query.data && !unauthorized && !forbidden && <>
-      {shifts.length ? <><h3 className={styles.sectionTitle}>Open opportunities <span>{shifts.length}</span></h3><ShiftList itemTestId="shift-list-item" shifts={shifts} now={now} renderAction={(shift) => <button data-testid="shift-claim-button" className={styles.claimButton} disabled={mutation.isPending} onClick={() => { mutation.reset(); setSuccess(false); setSelected(shift) }}>Claim shift</button>} /></>
+      {shifts.length ? <><h3 className={styles.sectionTitle}>Open opportunities <span>{shifts.length}</span></h3><ShiftList itemTestId="shift-list-item" shifts={shifts} now={now} renderAction={(shift) => <div>{shift.eligibility?.reasons.map(reason => <p key={reason}>{reason}</p>)}<button data-testid="shift-claim-button" className={styles.claimButton} disabled={mutation.isPending || shift.eligibility?.eligible === false} onClick={() => { mutation.reset(); setSuccess(false); setSelected(shift) }}>Claim shift</button></div>} /></>
         : <div className={styles.state}><h3>No available shifts right now</h3><p>There are no upcoming open shifts. Check back later or refresh for new opportunities.</p></div>}
     </>}
   </ShiftSection>
