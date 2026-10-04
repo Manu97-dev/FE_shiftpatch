@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AuthContext } from '../auth/contexts/auth.context'
 import { CredentialDocuments } from './credential-documents'
 function mount(role: 'nurse' | 'admin' = 'nurse') {
-  render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><AuthContext.Provider value={{ session: { token: 'token', user: { id: '20000000-0000-4000-8000-000000000001', name: 'Alex', role } }, status: 'ready', signIn: vi.fn(), signOut: vi.fn(), clearSession: vi.fn(), retryRestore: vi.fn() }}><CredentialDocuments /></AuthContext.Provider></QueryClientProvider>)
+  render(<QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}><AuthContext.Provider value={{ session: { token: 'token', user: { id: '20000000-0000-4000-8000-000000000001', name: 'Select Alex', role } }, status: 'ready', signIn: vi.fn(), signOut: vi.fn(), clearSession: vi.fn(), retryRestore: vi.fn() }}><CredentialDocuments /></AuthContext.Provider></QueryClientProvider>)
 }
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })
 it('shows loading and empty state while separating self-reported expiry', async () => {
@@ -23,8 +23,8 @@ it('shows an error without a retry control', async () => {
 })
 it('admin sees nurse names and downloads without mutation controls', async () => {
   vi.stubGlobal('fetch', vi.fn(async () => new Response(JSON.stringify({ documents: [{ id: '10000000-0000-4000-8000-000000000001', kind: 'tb_test', filename: 'tb.pdf', expiresOn: '2027-01-01', size: 100, nurseName: 'Alex' }], selfReportedExpiry: null }))))
-  mount('admin'); await screen.findByText('TB test result — Alex')
-  expect(screen.getByRole('button', { name: 'Download' })).toBeTruthy()
+  mount('admin'); await screen.findByRole('table')
+  expect(screen.getByRole('button', { name: 'Download tb.pdf for Alex' })).toBeTruthy()
   expect(screen.queryByLabelText('Document file')).toBeNull()
   expect(screen.queryByRole('button', { name: 'Save expiry' })).toBeNull()
 })
@@ -57,4 +57,18 @@ it('labels demo auto-approval and displays the expiry used for claims', async ()
   await screen.findByText(/Demo auto-approval enabled/)
   expect(screen.getByText(/Credential expiry used for shift claims/).textContent).toContain('2028-01-01')
   expect(screen.queryByText(/Document dates are tracked separately/)).toBeNull()
+})
+it('requires explicit nurse selection and displays export failure without downloading', async () => {
+  const fetchMock = vi.fn(async (_url: string, options: RequestInit) => options.method === 'POST'
+    ? new Response(JSON.stringify({ error: 'A referenced file is missing. No archive was generated.' }), { status: 409 })
+    : new Response(JSON.stringify({ documents: [{ id: '10000000-0000-4000-8000-000000000001', nurseId: '10000000-0000-4000-8000-000000000002', kind: 'tb_test', filename: 'tb.pdf', expiresOn: '2020-01-01', size: 100, nurseName: 'Alex' }], selfReportedExpiry: null })))
+  vi.stubGlobal('fetch', fetchMock); mount('admin')
+  const button = await screen.findByRole('button', { name: 'Download selected ZIP (0)' })
+  expect((button as HTMLButtonElement).disabled).toBe(true)
+  fireEvent.click(screen.getByRole('checkbox', { name: 'Select Alex' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Download selected ZIP (1)' }))
+  expect((await screen.findByRole('alert')).textContent).toContain('No archive was generated')
+  const call = fetchMock.mock.calls.find(([, options]) => options.method === 'POST')!
+  expect(JSON.parse(String(call[1].body))).toEqual({ nurseIds: ['10000000-0000-4000-8000-000000000002'] })
+  expect(new Headers(call[1].headers).get('Authorization')).toBe('Bearer token')
 })
