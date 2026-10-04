@@ -17,7 +17,7 @@ function mount() {
 }
 async function openDialog() {
   await screen.findByRole('button', { name: 'Cancel shift' })
-  await userEvent.click(screen.getByRole('button', { name: 'Cancel shift' }))
+  await userEvent.click(screen.getByTestId('shift-cancel-button'))
   return screen.getByRole('dialog', { name: 'Cancel this shift?' })
 }
 afterEach(() => { cleanup(); vi.unstubAllGlobals() })

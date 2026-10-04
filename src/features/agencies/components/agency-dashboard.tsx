@@ -32,6 +32,7 @@ export function AgencyDashboard() {
 }
 function AgencyShifts({ agencyId, agencyName }: { agencyId: string; agencyName: string }) {
   const [creating, setCreating] = useState(false)
+  const [created, setCreated] = useState(false)
   const query = useAgencyShifts(agencyId)
   const { clearSession } = useAuth()
   const now = useShiftClock()
@@ -40,13 +41,14 @@ function AgencyShifts({ agencyId, agencyName }: { agencyId: string; agencyName: 
   const past = shifts.filter((shift) => shiftTimes(shift).end.getTime() <= now).reverse()
   const unauthorized = query.error instanceof ApiError && query.error.status === 401
   const forbidden = query.error instanceof ApiError && query.error.status === 403
-  return <Dialog.Root open={creating} onOpenChange={setCreating}><ShiftSection id="agency-shifts" title={query.data?.agencyName ?? "Agency shifts"} description="All shifts for this agency, ordered by schedule."
+  return <Dialog.Root open={creating} onOpenChange={open => { setCreating(open); if (open) setCreated(false) }}><ShiftSection id="agency-shifts" title={query.data?.agencyName ?? "Agency shifts"} description="All shifts for this agency, ordered by schedule."
     loading={query.isPending} fetching={query.isFetching} hasError={query.isError} hasData={Boolean(query.data)} unauthorized={unauthorized} forbidden={forbidden}
     headerActions={query.data && !unauthorized && !forbidden ? <Dialog.Trigger asChild><button data-testid="agency-post-shift-button" className={styles.button}>New shift</button></Dialog.Trigger> : undefined}
     loadingMessage="Loading agency shifts…" errorTitle="We could not load agency shifts" forbiddenTitle="Agency access unavailable" forbiddenMessage="No agency membership is linked to your account, or your access has been revoked. Contact your administrator."
     staleMessage="These shifts may be out of date. Please refresh." onRefresh={() => void query.refetch()} onSignIn={clearSession}>
     {query.data && !unauthorized && !forbidden && <>
-      {creating && <CreateShiftForm agencyId={agencyId} agencyName={agencyName} onClose={() => setCreating(false)} onCreated={() => setCreating(false)} />}
+      {created && <p data-testid="notification-banner" role="status">Shift created successfully.</p>}
+      {creating && <CreateShiftForm agencyId={agencyId} agencyName={agencyName} onClose={() => setCreating(false)} onCreated={() => { setCreating(false); setCreated(true) }} />}
       {shifts.length === 0 ? <div className={styles.state}><h3>No shifts posted yet</h3><p>Your agency’s shifts will appear here once they are created.</p></div> : <>
         <h3 className={styles.sectionTitle}>Upcoming & current <span>{active.length}</span></h3>
         {active.length ? <ShiftList shifts={active} now={now} renderAction={(shift) => <AgencyAssignmentControls shift={shift} now={now} />} /> : <p>No upcoming or current shifts.</p>}

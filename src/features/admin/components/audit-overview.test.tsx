@@ -20,6 +20,7 @@ it('renders safe event fields and navigates older and newer pages', async () => 
   vi.stubGlobal('fetch', fetchMock); mount()
   await screen.findByRole('cell', { name: 'Agency created' })
   expect(screen.getByText('Sunrise')).toBeTruthy()
+  expect(screen.getByTestId('audit-log-table')).toBe(screen.getByRole('table', { name: 'Audit log' }))
   await userEvent.click(screen.getByRole('button', { name: 'Older records' }))
   await screen.findByText(/No audit records yet/)
   expect(fetchMock.mock.calls.at(-1)![0]).toContain('beforeId=')

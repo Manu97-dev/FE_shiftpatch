@@ -42,7 +42,7 @@ export function AuditOverview() {
     staleMessage="These records may be out of date. Please refresh." onSignIn={clearSession} onRefresh={() => { void query.refetch() }}>
     {query.data && !unauthorized && !forbidden && <>
       {query.data.events.length ? <div className={styles.tableScroll} role="region" aria-label="Audit records" tabIndex={0}>
-        <table className={styles.table} aria-label="Audit log">
+        <table data-testid="audit-log-table" className={styles.table} aria-label="Audit log">
           <thead><tr><th scope="col">Timestamp</th><th scope="col">Action</th><th scope="col">Actor</th><th scope="col">Target</th>{contextColumns.map(column => <th key={column.key} scope="col">{column.label}</th>)}</tr></thead>
           <tbody>{query.data.events.map(event => <tr key={event.id}>
             <td><time dateTime={event.occurredAt}>{new Date(event.occurredAt).toLocaleString()}</time></td>

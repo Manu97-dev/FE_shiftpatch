@@ -6,17 +6,20 @@ import type { Session } from '../api/auth.schemas'
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const client = useQueryClient()
+  const [signInConfirmed, setSignInConfirmed] = useState(false)
   const [session, setSession] = useState<Session | null>(null)
-  const clearSession = useCallback(() => { setSession(null); client.clear() }, [client])
+  const clearSession = useCallback(() => { setSession(null); setSignInConfirmed(false); client.clear() }, [client])
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [attempt, setAttempt] = useState(0)
   const signIn = useCallback((value: Session) => {
     setSession(value)
+    setSignInConfirmed(true)
     setStatus('ready')
   }, [])
   const signOut = useCallback(async () => {
     await logout()
     setSession(null)
+    setSignInConfirmed(false)
   }, [])
   const retryRestore = useCallback(() => {
     setStatus('loading')
@@ -35,6 +38,6 @@ export function AuthProvider({ children }: PropsWithChildren) {
     return () => controller.abort()
   }, [attempt])
 
-  const value = useMemo(() => ({ session, signIn, signOut, clearSession, status, retryRestore }), [session, signIn, signOut, clearSession, status, retryRestore])
+  const value = useMemo(() => ({ session, signInConfirmed, signIn, signOut, clearSession, status, retryRestore }), [session, signInConfirmed, signIn, signOut, clearSession, status, retryRestore])
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

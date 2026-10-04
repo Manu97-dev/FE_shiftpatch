@@ -28,6 +28,9 @@ function setup(path = '/login') {
 
 async function submit(actor: ReturnType<typeof userEvent.setup>, password = 'password') {
   await screen.findByLabelText('Email address')
+  expect(screen.getByTestId('login-email-input')).toBe(screen.getByLabelText('Email address'))
+  expect(screen.getByTestId('login-password-input')).toBe(screen.getByLabelText('Password'))
+  expect(screen.getByTestId('login-submit-button')).toBe(screen.getByRole('button', { name: 'Sign in' }))
   await actor.type(screen.getByLabelText('Email address'), 'nurse@example.com')
   await actor.type(screen.getByLabelText('Password'), password)
   await actor.click(screen.getByRole('button', { name: 'Sign in' }))
@@ -42,6 +45,7 @@ describe('login flow', () => {
     const actor = setup()
     await submit(actor, ' password ')
     await screen.findByRole('main', { name: 'Home' })
+    expect(screen.getByTestId('notification-banner').textContent).toBe('Signed in successfully.')
     expect(fetchMock.mock.calls.filter(([url]) => url === '/api/auth/login')).toHaveLength(1)
     const [url, options] = fetchMock.mock.calls[0]!
     expect(url).toBe('/api/auth/login')
@@ -69,7 +73,8 @@ describe('login flow', () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response(JSON.stringify(body), { status })))
     const actor = setup()
     await submit(actor)
-    expect((await screen.findByRole('alert')).textContent).toBe(message)
+    expect((await screen.findByTestId('notification-banner')).textContent).toBe(message)
+    expect(screen.getByTestId('notification-banner').getAttribute('role')).toBe('alert')
     expect(screen.queryByRole('main', { name: 'Home' })).toBeNull()
     expect((screen.getByRole('button', { name: 'Sign in' }) as HTMLButtonElement).disabled).toBe(false)
   })

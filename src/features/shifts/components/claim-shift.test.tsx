@@ -17,6 +17,7 @@ function mount() {
 }
 async function openDialog() {
   await screen.findByRole('button', { name: 'Claim shift' })
+  expect(within(screen.getByTestId('shift-list-item')).getByTestId('shift-claim-button')).toBe(screen.getByRole('button', { name: 'Claim shift' }))
   await userEvent.click(screen.getByRole('button', { name: 'Claim shift' }))
   return screen.getByRole('dialog', { name: 'Claim this shift?' })
 }
@@ -35,7 +36,7 @@ it('confirms the schedule, posts with no body, and refreshes both lists after su
   expect(within(dialog).getByText(/Ends next day/)).toBeTruthy()
   expect(fetchMock.mock.calls.filter(([, options]) => options.method === 'POST')).toHaveLength(0)
   await userEvent.click(within(dialog).getByRole('button', { name: 'Confirm claim' }))
-  await screen.findByText('Shift claimed successfully. You can find it in My shifts.')
+  expect((await screen.findByTestId('notification-banner')).textContent).toBe('Shift claimed successfully. You can find it in My shifts.')
   const posts = fetchMock.mock.calls.filter(([, options]) => options.method === 'POST')
   expect(posts).toHaveLength(1)
   expect(posts[0]![0]).toBe(`/api/shifts/${shift.id}/claim`)
@@ -59,7 +60,7 @@ it.each([
   mount()
   const dialog = await openDialog()
   await userEvent.click(within(dialog).getByRole('button', { name: 'Confirm claim' }))
-  expect((await within(dialog).findByRole('alert')).textContent).toContain(message)
+  expect((await within(dialog).findByTestId('notification-banner')).textContent).toContain(message)
   expect(within(dialog).queryByRole('button', { name: 'Confirm claim' })).toBeNull()
 })
 it('allows backing out without sending a claim', async () => {

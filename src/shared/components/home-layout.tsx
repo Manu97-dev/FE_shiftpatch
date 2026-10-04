@@ -6,7 +6,7 @@ import type { ReactNode } from 'react'
 import styles from './home-layout.module.scss'
 
 export function HomeLayout({ children }: { children: ReactNode }) {
-  const { session, signOut } = useAuth()
+  const { session, signOut, signInConfirmed } = useAuth()
   const client = useQueryClient()
   const [pending, setPending] = useState(false)
   const [failed, setFailed] = useState(false)
@@ -47,12 +47,12 @@ export function HomeLayout({ children }: { children: ReactNode }) {
           <span className={styles.avatar} aria-hidden="true">{session?.user.name.trim().charAt(0).toUpperCase()}</span>
           <div className={styles.identity}><strong>{session?.user.name}</strong><span>{session?.user.role}</span></div>
           <button onClick={handleLogout} disabled={pending}>{pending ? 'Signing out…' : 'Sign out'}</button>
-          {failed && <p role="alert">We could not sign you out. Please try again.</p>}
+          {failed && <p data-testid="notification-banner" role="alert">We could not sign you out. Please try again.</p>}
         </div>
       </div>
     </aside>
     <main ref={main} id="workspace-content" tabIndex={-1} aria-label="Home" className={styles.main}>
-      <div className={styles.content}>{children}</div>
+      <div className={styles.content}>{signInConfirmed && <p data-testid="notification-banner" role="status">Signed in successfully.</p>}{children}</div>
     </main>
   </div></WorkspaceNavigationContext.Provider>
 }

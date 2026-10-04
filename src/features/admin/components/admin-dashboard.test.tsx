@@ -24,6 +24,8 @@ it('applies filters through the API and keeps summary totals global', async () =
   const fetchMock = vi.fn(async (url: string, _options: RequestInit) => new Response(JSON.stringify(url.includes('/summary') ? summary : { shifts: url.includes('?') ? [shifts[0]] : shifts })))
   vi.stubGlobal('fetch', fetchMock); mount()
   await screen.findByText('2 shifts across all agencies')
+  expect(screen.getByTestId('admin-dashboard-shift-table')).toBe(screen.getByRole('table', { name: 'All shifts' }))
+  expect(screen.getAllByTestId('admin-shift-status-badge').map(badge => badge.getAttribute('data-status'))).toEqual(['open', 'filled'])
   await userEvent.selectOptions(screen.getByLabelText('Agency'), agency)
   await userEvent.selectOptions(screen.getByLabelText('Status'), 'open')
   await userEvent.type(screen.getByLabelText('Start date from'), '2099-10-01')

@@ -3,6 +3,7 @@ import type { Session } from '../api/auth.schemas'
 
 export const AuthContext = createContext<{
   session: Session | null
+  signInConfirmed?: boolean
   status: 'loading' | 'ready' | 'error'
   retryRestore: () => void
   clearSession: () => void

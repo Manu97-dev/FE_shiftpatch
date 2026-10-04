@@ -42,6 +42,7 @@ export function CredentialDocuments() {
       const url = URL.createObjectURL(await response.blob())
       const link = document.createElement('a'); link.href = url; link.download = filename; link.click()
       setTimeout(() => URL.revokeObjectURL(url), 1000)
+      setMessage('Document downloaded.')
     } catch (error) { setDownloadError(error instanceof Error ? error.message : 'Download failed.') } finally { setDownloading(null) }
   }
   const exportDocuments = useMutation({ mutationFn: async () => {
@@ -51,7 +52,7 @@ export function CredentialDocuments() {
     const link = document.createElement('a'); link.href = url; link.download = 'credential-documents.zip'; link.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000)
   }, onSuccess: () => setMessage('Archive downloaded. Review manifest.json for scope, versions and expiry dates.') })
-  function clearFeedback() { setMessage(''); setDownloadError(''); upload.reset(); update.reset() }
+  function clearFeedback() { setMessage(''); setDownloadError(''); upload.reset(); update.reset(); exportDocuments.reset() }
   function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); clearFeedback(); upload.mutate(event.currentTarget) }
   return <section className={styles.section} aria-labelledby="credentials-title">
     <h2 id="credentials-title">Credential documents</h2>
@@ -61,8 +62,8 @@ export function CredentialDocuments() {
       {query.data && <p>{query.data.autoApprovalEnabled ? 'Credential expiry used for shift claims' : 'Existing self-reported credential expiry'}: {query.data.selfReportedExpiry}.{!query.data.autoApprovalEnabled && ' Document dates are tracked separately.'}</p>}
       <form onSubmit={submit} onChange={event => { if (!(event.target instanceof HTMLInputElement && event.target.type === 'file')) clearFeedback() }} className={styles.form}>
         <label>Document type<span className={styles.selectControl}><select name="kind" disabled={upload.isPending}><option value="nurse_license">Nurse license</option><option value="tb_test">TB test result</option></select></span></label>
-        <label>Document expiry date<input type="date" name="expiresOn" disabled={upload.isPending} required min="0001-01-01" max="9999-12-31" /></label>
-        <label className={styles.fileField}>Document file<input type="file" name="document" disabled={upload.isPending} accept=".pdf,.jpg,.jpeg,.png" aria-describedby="credential-file-help" onClick={event => {
+        <label>Document expiry date<input data-testid="credential-expiry-date-input" type="date" name="expiresOn" disabled={upload.isPending} required min="0001-01-01" max="9999-12-31" /></label>
+        <label className={styles.fileField}>Document file<input data-testid="credential-upload-input" type="file" name="document" disabled={upload.isPending} accept=".pdf,.jpg,.jpeg,.png" aria-describedby="credential-file-help" onClick={event => {
           if (!event.currentTarget.form?.reportValidity()) event.preventDefault()
         }} onChange={event => {
           if (event.currentTarget.files?.length) event.currentTarget.form?.requestSubmit()
@@ -71,8 +72,8 @@ export function CredentialDocuments() {
         {upload.isPending && <p role="status">Uploading…</p>}
       </form>
     </>}
-    {message && <p role="status">{message}</p>}
-    {(upload.isError || update.isError || downloadError) && <p role="alert">{downloadError || (upload.error || update.error)?.message}</p>}
+    {message && <p data-testid="notification-banner" role="status">{message}</p>}
+    {(upload.isError || update.isError || downloadError) && <p data-testid="notification-banner" role="alert">{downloadError || (upload.error || update.error)?.message}</p>}
     {query.isPending ? <p role="status">Loading documents…</p> : query.isError ? <p role="alert">Could not load documents.</p> : <>
       {!query.data.documents.length && <p>No credential documents uploaded yet.</p>}
       {admin && <>
@@ -82,7 +83,7 @@ export function CredentialDocuments() {
         </div>
         <p className={styles.help}>The ZIP includes all stored versions, expired documents and a manifest. Both a license and TB record are required per nurse. Missing files block the download. Limit: 100 files / 25 MiB. Demo files may disappear on restart.</p>
         {exportDocuments.isPending && <p role="status">Preparing document archive…</p>}
-        {exportDocuments.isError && <p role="alert">{exportDocuments.error.message}</p>}
+        {exportDocuments.isError && <p data-testid="notification-banner" role="alert">{exportDocuments.error.message}</p>}
         {!!query.data.documents.length && <div className={styles.tableScroll}><table className={styles.nurseTable}>
           <caption className={styles.tableCaption}>Nurse documents — select rows for a batch ZIP or download individual files below.</caption>
           <thead><tr><th scope="col">Select</th><th scope="col">Nurse</th><th scope="col">License documents</th><th scope="col">TB test results</th></tr></thead>
